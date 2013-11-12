@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="inheritance" targetType="exe" targetName="inheritanceDemo">
+	<proxygen useRichTypes="false" useInheritance="true">
+		<input-classes>
+			<input-class name="demo.chapters.san.inheritance.InheritanceDemo"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="inheritance.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

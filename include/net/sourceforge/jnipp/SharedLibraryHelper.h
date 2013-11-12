@@ -32,7 +32,7 @@ namespace net
 			{
 			private:
 				SHLIBHANDLE handle;
-				std::string libName;
+				::std::string libName;
 
 			public:
 				SharedLibraryHelper();

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="fields" targetType="exe" targetName="fieldsDemo">
+	<proxygen useRichTypes="false" attributeGetters="true" attributeSetters="true">
+		<input-classes>
+			<input-class name="demo.chapters.san.fields.FieldsDemo"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="fields.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<project name="disambiguate" targetType="exe" targetName="disambiguateDemo">
+	<proxygen useRichTypes="false">
+		<input-classes>
+			<input-class name="demo.chapters.san.disambiguate.DisambiguateDemo"/>
+			<input-class name="java.lang.Integer"/>
+			<input-class name="java.lang.Double"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="disambiguate.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

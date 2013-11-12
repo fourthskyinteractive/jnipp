@@ -27,6 +27,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class ComputeLongElementType<1>
 			{
 			public:
@@ -110,6 +111,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class JLongArrayHelper<1>
 			{
 			private:

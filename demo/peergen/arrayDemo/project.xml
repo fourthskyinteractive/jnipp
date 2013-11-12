@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="arrayDemo" targetType="shlib" targetName="ArrayDemo">
+	<peergen destructive="false" useInheritance="true">
+		<input-classes>
+			<input-class name="demo.peergen.arrayDemo.ArrayDemo"/>
+		</input-classes>
+	</peergen>
+	<nmakefile name="arrayDemo.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

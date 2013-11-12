@@ -111,6 +111,7 @@ namespace net
 					}
 			};
 			
+			template<>
 			class JStringHelperArray<1>
 			{
 			private:

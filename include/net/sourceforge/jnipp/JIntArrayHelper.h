@@ -27,6 +27,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class ComputeIntElementType<1>
 			{
 			public:
@@ -109,7 +110,8 @@ namespace net
 					return nativeArray;
 				}
 			};
-			
+
+			template<>
 			class JIntArrayHelper<1>
 			{
 			private:

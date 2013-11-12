@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<project name="exceptionDemo" targetType="shlib" targetName="ExceptionDemo">
+	<peergen destructive="false">
+		<input-classes>
+			<input-class name="demo.peergen.exceptionDemo.ExceptionDemo"/>
+		</input-classes>
+	</peergen>
+	<proxygen destructive="false">
+		<input-classes>
+			<input-class name="java.lang.UnsupportedOperationException"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="exceptionDemo.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

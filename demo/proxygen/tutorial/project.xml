@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="tutorial" targetType="exe" targetName="proxyTutorial">
+	<proxygen destructive="false" attributeSetters="true">
+		<input-classes>
+			<input-class name="demo.proxygen.tutorial.MyCoolClass"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="tutorial.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

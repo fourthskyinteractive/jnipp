@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+
+<project name="MainLauncher" default="default" basedir=".">
+
+	<property name="name" value="MainLauncher"/>
+	<property name="base.dir" value="../.."/>
+	<property name="src.dir" value="${base.dir}/demo/misc"/>
+	<property name="intermediate.dir" value="${base.dir}/build/classes"/>
+	<property name="target.dir" value="${base.dir}/build/demo/misc/mainLauncher"/>
+	<property environment="env"/>
+
+	<target name="prepare">
+		<mkdir dir="${intermediate.dir}"/>
+		<mkdir dir="${target.dir}"/>
+		<tstamp/>
+	</target>
+
+	<target name="generate">
+		<java className="net.sourceforge.jnipp.main.Main" fork="yes" dir="${src.dir}/mainLauncher">
+			<arg line="-projectFile project.xml"/>
+			<classpath>
+				<pathelement location="${env.JNIPP_HOME}/lib/jnipp.jar"/>
+				<pathelement location="${intermediate.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="native" depends="generate">
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}/mainLauncher" executable="nmake.exe">
+			<arg line="/f mainLauncher.mak CFG=&quot;Debug&quot; all"/>
+		</exec>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}/mainLauncher" executable="nmake.exe">
+			<arg line="/f mainLauncher.mak CFG=&quot;Release&quot; all"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${src.dir}/mainLauncher" executable="gmake">
+			<arg line="all"/>
+		</exec>
+		<copy todir="${target.dir}" flatten="true">
+			<fileset dir="${src.dir}/mainLauncher">
+				<include name="Debug/jnipp_d"/>
+				<include name="Release/jnipp"/>
+				<include name="Debug/jnipp_d.exe"/>
+				<include name="Release/jnipp.exe"/>
+			</fileset>
+		</copy>
+		<chmod perm="ugo+rwx">
+			<fileset dir="${target.dir}">
+				<include name="jnipp_d"/>
+				<include name="jnipp"/>
+			</fileset>
+		</chmod>
+	</target>
+	
+	<target name="run">
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${target.dir}" executable="cmd.exe">
+			<env key="Path" path="${java.library.path};${env.JNIPP_HOME}/lib"/>
+			<env key="CLASSPATH" path="${java.class.path};${intermediate.dir}"/>
+			<arg line="/c jnipp_d.exe"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${target.dir}" executable="sh">
+			<env key="LD_LIBRARY_PATH" path="${env.LD_LIBRARY_PATH}:${env.JNIPP_HOME}/lib"/>
+			<env key="CLASSPATH" path="${java.class.path};${env.JNIPP_HOME}/lib/jnipp.jar;${intermediate.dir}"/>
+			<arg line="-c ./jnipp_d"/>
+		</exec>
+	</target>
+
+	<target name="clean">
+		<delete dir="${intermediate.dir}/demo/misc/mainLauncher"/>
+		<delete dir="${target.dir}"/>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}" executable="nmake.exe">
+			<arg line="/f mainLauncher.mak CFG=&quot;mainLauncher - Win32 Debug&quot; clean"/>
+		</exec>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}" executable="nmake.exe">
+			<arg line="/f mainLauncher.mak CFG=&quot;mainLauncher - Win32 Release&quot; clean"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${src.dir}" executable="gmake">
+			<arg line="clean"/>
+		</exec>
+	</target>
+
+	<target name="rebuild" depends="clean,native">
+	</target>
+
+	<target name="default" depends="native">
+	</target>
+
+</project>
+

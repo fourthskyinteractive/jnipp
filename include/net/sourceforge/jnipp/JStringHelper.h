@@ -36,14 +36,17 @@ namespace net
 				JStringHelper();
 				JStringHelper(const JStringHelper &rhs);
 				JStringHelper(const char *p);
+				JStringHelper(const ::std::string& p);
 				JStringHelper(jobject obj);
 				~JStringHelper();
 				JStringHelper& operator=(const JStringHelper &rhs);
 				JStringHelper& operator=(const char *rhs);
+				JStringHelper& operator=(const ::std::string& rhs);
 				JStringHelper& operator=(jobject rhs);
 				operator jstring() const;
 				operator jobject() const;
 				operator const char*() const;
+				operator ::std::string() const;
 				static jclass getClass();
 			};
 		}

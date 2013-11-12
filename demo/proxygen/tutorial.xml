@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+
+<project name="Tutorial" default="default" basedir=".">
+
+	<property name="name" value="Tutorial"/>
+	<property name="base.dir" value="../.."/>
+	<property name="src.dir" value="${base.dir}/demo/proxygen"/>
+	<property name="intermediate.dir" value="${base.dir}/build/classes"/>
+	<property name="target.dir" value="${base.dir}/build/demo/proxygen/tutorial"/>
+	<property environment="env"/>
+
+	<target name="prepare">
+		<mkdir dir="${intermediate.dir}"/>
+		<mkdir dir="${target.dir}"/>
+		<tstamp/>
+	</target>
+
+	<target name="compile" depends="prepare">
+		<javac srcdir="${src.dir}"
+				 destdir="${intermediate.dir}"
+				 deprecation="off"
+				 optimize="on">
+			<include name="tutorial/MyCoolClass.java"/>
+		</javac>
+	</target>
+
+	<target name="generate" depends="compile">
+		<java className="net.sourceforge.jnipp.main.Main" fork="yes" dir="${src.dir}/tutorial">
+			<arg line="-projectFile project.xml"/>
+			<classpath>
+				<pathelement location="${env.JNIPP_HOME}/lib/jnipp.jar"/>
+				<pathelement location="${intermediate.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="native" depends="generate">
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}/tutorial" executable="nmake.exe">
+			<arg line="/f tutorial.mak CFG=&quot;Debug&quot; all"/>
+		</exec>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}/tutorial" executable="nmake.exe">
+			<arg line="/f tutorial.mak CFG=&quot;Release&quot; all"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${src.dir}/tutorial" executable="gmake">
+			<arg line="all"/>
+		</exec>
+		<copy todir="${target.dir}" flatten="true">
+			<fileset dir="${src.dir}/tutorial">
+				<include name="Debug/proxyTutorial_d"/>
+				<include name="Release/proxyTutorial"/>
+				<include name="Debug/proxyTutorial_d.exe"/>
+				<include name="Release/proxyTutorial.exe"/>
+			</fileset>
+		</copy>
+		<chmod perm="ugo+rwx">
+			<fileset dir="${target.dir}">
+				<include name="proxyTutorial_d"/>
+				<include name="proxyTutorial"/>
+			</fileset>
+		</chmod>
+	</target>
+	
+	<target name="run">
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${target.dir}" executable="cmd.exe">
+			<env key="Path" path="${java.library.path};${env.JNIPP_HOME}/lib"/>
+			<env key="CLASSPATH" path="${java.class.path};${intermediate.dir}"/>
+			<arg line="/c proxyTutorial_d.exe"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${target.dir}" executable="sh">
+			<env key="LD_LIBRARY_PATH" path="${env.LD_LIBRARY_PATH}:${env.JNIPP_HOME}/lib"/>
+			<env key="CLASSPATH" path="${java.class.path};${env.JNIPP_HOME}/lib/jnipp.jar;${intermediate.dir}"/>
+			<arg line="-c ./proxyTutorial_d"/>
+		</exec>
+	</target>
+
+	<target name="clean">
+		<delete dir="${intermediate.dir}/demo/proxygen/tutorial"/>
+		<delete dir="${target.dir}"/>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}" executable="nmake.exe">
+			<arg line="/f tutorial.mak CFG=&quot;tutorial - Win32 Debug&quot; clean"/>
+		</exec>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}" executable="nmake.exe">
+			<arg line="/f tutorial.mak CFG=&quot;tutorial - Win32 Release&quot; clean"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${src.dir}" executable="gmake">
+			<arg line="clean"/>
+		</exec>
+	</target>
+
+	<target name="rebuild" depends="clean,native">
+	</target>
+
+	<target name="default" depends="native">
+	</target>
+
+</project>
+

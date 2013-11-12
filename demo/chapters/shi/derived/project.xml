@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="derived" targetType="shlib" targetName="DerivedDemo">
+	<peergen useInheritance="true">
+		<input-classes>
+			<input-class name="demo.chapters.shi.derived.DerivedDemo"/>
+		</input-classes>
+	</peergen>
+	<nmakefile name="derived.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<project name="googleplay" targetType="shlib" targetName="GooglePlayServices" usePartialSpec="true">
+	<proxygen useRichTypes="true" useInheritance="true" recursionLevel="1">
+		<input-classes>
+			<input-class name="com.google.android.gms.games.Game"/>
+			<input-class name="com.google.android.gms.games.Player"/>
+			<input-class name="com.google.android.gms.games.PlayerBuffer"/>
+			<input-class name="com.google.android.gms.games.multiplayer.Participant"/>
+			<input-class name="com.google.android.gms.games.multiplayer.Invitation"/>
+			<input-class name="com.google.android.gms.games.multiplayer.realtime.RoomConfig"/>
+			<input-class name="com.google.android.gms.games.multiplayer.realtime.Room"/>
+			<input-class name="com.google.android.gms.games.multiplayer.realtime.RealTimeMessage"/>
+			<input-class name="com.google.android.gms.games.multiplayer.realtime.RealTimeSocket"/>
+			<input-class name="com.google.android.gms.games.achievement.Achievement"/>
+			<input-class name="com.google.android.gms.games.leaderboard.Leaderboard"/>
+			<input-class name="com.google.android.gms.games.achievement.AchievementBuffer"/>
+			<input-class name="com.google.android.gms.games.leaderboard.LeaderboardBuffer"/>
+			<input-class name="com.google.android.gms.games.leaderboard.LeaderboardScore"/>
+			<input-class name="com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer"/>
+			<input-class name="com.google.android.gms.games.leaderboard.SubmitScoreResult"/>
+			<input-class name="com.google.android.gms.common.ConnectionResult"/>
+			<input-class name="com.google.android.gms.common.GooglePlayServicesClient"/>
+			<input-class name="com.google.android.gms.games.GamesClient"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="googleplay.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

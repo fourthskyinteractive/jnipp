@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="guiLauncher" targetType="exe" targetName="guiLauncher">
+	<proxygen destructive="false">
+		<input-classes>
+			<input-class name="net.sourceforge.jnipp.gui.App"/>
+			<input-class name="java.lang.Throwable"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="guiLauncher.mak"/>
+</project>
+

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<project name="tutorial" targetType="exe" targetName="exceptionDemo">
+	<proxygen destructive="false">
+		<input-classes>
+			<input-class name="demo.proxygen.exceptionDemo.ExceptionDemo"/>
+			<input-class name="java.lang.Throwable"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="exceptionDemo.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

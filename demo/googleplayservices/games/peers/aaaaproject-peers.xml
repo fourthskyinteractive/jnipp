@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<project name="googleplay" targetType="shlib" targetName="GooglePlayServices">
+	<peergen destructive="false">
+		<input-classes>
+			<input-class name="com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener"/>
+			<input-class name="com.google.android.gms.games.multiplayer.OnInvitationReceivedListener"/>
+			<input-class name="com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener"/>
+			
+			<!-- Classes that cannot be generated, due to native libraries links -->
+			<!--
+			<input-class name="com.google.android.gms.common.GooglePlayServicesClient$OnConnectionFailedListener"/>
+			<input-class name="com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks"/>
+			-->
+		</input-classes>
+	</peergen>
+	<nmakefile name="googleplay.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>

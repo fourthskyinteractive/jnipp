@@ -27,6 +27,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class ComputeShortElementType<1>
 			{
 			public:
@@ -110,6 +111,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class JShortArrayHelper<1>
 			{
 			private:

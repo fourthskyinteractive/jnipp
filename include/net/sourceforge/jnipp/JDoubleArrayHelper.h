@@ -27,6 +27,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class ComputeDoubleElementType<1>
 			{
 			public:
@@ -110,6 +111,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class JDoubleArrayHelper<1>
 			{
 			private:

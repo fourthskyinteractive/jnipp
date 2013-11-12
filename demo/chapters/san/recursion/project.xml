@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="recursion" targetType="exe" targetName="recursionDemo">
+	<proxygen useRichTypes="false" recursionLevel="1">
+		<input-classes>
+			<input-class name="demo.chapters.san.recursion.RecursionDemo"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="recursion.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

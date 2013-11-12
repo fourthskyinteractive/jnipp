@@ -27,6 +27,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class ComputeCharElementType<1>
 			{
 			public:
@@ -110,6 +111,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class JCharArrayHelper<1>
 			{
 			private:

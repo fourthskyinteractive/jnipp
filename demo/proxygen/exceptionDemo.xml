@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+
+<project name="ExceptionDemo" default="default" basedir=".">
+
+	<property name="name" value="ExctroeptionDemo"/>
+	<property name="base.dir" value="../.."/>
+	<property name="src.dir" value="${base.dir}/demo/proxygen"/>
+	<property name="intermediate.dir" value="${base.dir}/build/classes"/>
+	<property name="target.dir" value="${base.dir}/build/demo/proxygen/exceptionDemo"/>
+	<property environment="env"/>
+
+	<target name="prepare">
+		<mkdir dir="${intermediate.dir}"/>
+		<mkdir dir="${target.dir}"/>
+		<tstamp/>
+	</target>
+
+	<target name="compile" depends="prepare">
+		<javac srcdir="${src.dir}"
+				 destdir="${intermediate.dir}"
+				 deprecation="off"
+				 optimize="on">
+			<include name="exceptionDemo/ExceptionDemo.java"/>
+		</javac>
+	</target>
+
+	<target name="generate" depends="compile">
+		<java className="net.sourceforge.jnipp.main.Main" fork="yes" dir="${src.dir}/exceptionDemo">
+			<arg line="-projectFile project.xml"/>
+			<classpath>
+				<pathelement location="${env.JNIPP_HOME}/lib/jnipp.jar"/>
+				<pathelement location="${intermediate.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="native" depends="generate">
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}/exceptionDemo" executable="nmake.exe">
+			<arg line="/f exceptionDemo.mak CFG=&quot;Debug&quot; all"/>
+		</exec>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}/exceptionDemo" executable="nmake.exe">
+			<arg line="/f exceptionDemo.mak CFG=&quot;Release&quot; all"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${src.dir}/exceptionDemo" executable="gmake">
+			<arg line="all"/>
+		</exec>
+		<copy todir="${target.dir}" flatten="true">
+			<fileset dir="${src.dir}/exceptionDemo">
+				<include name="Debug/exceptionDemo_d"/>
+				<include name="Release/exceptionDemo"/>
+				<include name="Debug/exceptionDemo_d.exe"/>
+				<include name="Release/exceptionDemo.exe"/>
+			</fileset>
+		</copy>
+		<chmod perm="ugo+rwx">
+			<fileset dir="${target.dir}">
+				<include name="exceptionDemo_d"/>
+				<include name="exceptionDemo"/>
+			</fileset>
+		</chmod>
+	</target>
+	
+	<target name="run">
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${target.dir}" executable="cmd.exe">
+			<env key="Path" path="${java.library.path};${env.JNIPP_HOME}/lib"/>
+			<env key="CLASSPATH" path="${java.class.path};${intermediate.dir}"/>
+			<arg line="/c exceptionDemo_d.exe"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${target.dir}" executable="sh">
+			<env key="LD_LIBRARY_PATH" path="${env.LD_LIBRARY_PATH}:${env.JNIPP_HOME}/lib"/>
+			<env key="CLASSPATH" path="${java.class.path};${env.JNIPP_HOME}/lib/jnipp.jar;${intermediate.dir}"/>
+			<arg line="-c ./exceptionDemo_d"/>
+		</exec>
+	</target>
+
+	<target name="clean">
+		<delete dir="${intermediate.dir}/demo/proxygen/exceptionDemo"/>
+		<delete dir="${target.dir}"/>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}" executable="nmake.exe">
+			<arg line="/f exceptionDemo.mak CFG=&quot;exceptionDemo - Win32 Debug&quot; clean"/>
+		</exec>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}" executable="nmake.exe">
+			<arg line="/f exceptionDemo.mak CFG=&quot;exceptionDemo - Win32 Release&quot; clean"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${src.dir}" executable="gmake">
+			<arg line="clean"/>
+		</exec>
+	</target>
+
+	<target name="rebuild" depends="clean,native">
+	</target>
+
+	<target name="default" depends="native">
+	</target>
+
+</project>
+

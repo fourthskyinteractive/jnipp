@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<project name="rich" targetType="shlib" targetName="RichDemo" usePartialSpec="false">
+	<peergen useInheritance="true" useRichTypes="true">
+		<input-classes>
+			<input-class name="demo.chapters.shi.rich.RichDemo"/>
+		</input-classes>
+		<proxygen useRichTypes="true"/>
+	</peergen>
+	<nmakefile name="rich.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

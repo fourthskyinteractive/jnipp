@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+
+<project name="Tutorial" default="default" basedir=".">
+
+	<property name="name" value="GooglePlay"/>
+	<property name="base.dir" value="../.."/>
+	<property name="src.dir" value="${base.dir}/demo/googleplayservices"/>
+	<property name="intermediate.dir" value="${base.dir}/build/classes"/>
+	<property name="target.dir" value="${base.dir}/build/demo/googleplayservices/games"/>
+	<property environment="env"/>
+
+	<target name="prepare">
+		<mkdir dir="${intermediate.dir}"/>
+		<mkdir dir="${target.dir}"/>
+		<tstamp/>
+	</target>
+
+	<target name="compile" depends="prepare">
+		<javac srcdir="${src.dir}"
+				 destdir="${intermediate.dir}"
+				 deprecation="off"
+				 optimize="on">
+			<include name="games/OnInvitationReceivedListener.java"/>
+			<include name="games/RoomUpdateListener.java"/>
+		</javac>
+	</target>
+
+	<!--<target name="generate" depends="compile">-->
+	<target name="generate-proxy" >
+		<java className="net.sourceforge.jnipp.main.Main" fork="yes" dir="${src.dir}/games/proxy">
+			<arg line="-projectFile aaaaproject-proxy.xml"/>
+			<classpath>
+				<pathelement location="${env.JNIPP_HOME}/lib/jnipp.jar"/>
+				<pathelement location="C:/Program Files/Java/Dev/Android/xmlbeans-1.0.jar"/>
+				<pathelement location="C:/Program Files/Java/Dev/Android/android.jar"/>
+				<pathelement location="${env.JNIPP_HOME}/lib/google-play-services.jar"/>
+				<pathelement location="${intermediate.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="generate-proxy-hard" >
+		<java className="net.sourceforge.jnipp.main.Main" fork="yes" dir="${src.dir}/games/proxy_hard">
+			<arg line="-projectFile aaaaproject-proxy.xml"/>
+			<classpath>
+				<pathelement location="${env.JNIPP_HOME}/lib/jnipp.jar"/>
+				<pathelement location="C:/Program Files/Java/Dev/Android/xmlbeans-1.0.jar"/>
+				<pathelement location="C:/Program Files/Java/Dev/Android/android.jar"/>
+				<pathelement location="${env.JNIPP_HOME}/lib/google-play-services.jar"/>
+				<pathelement location="${intermediate.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="generate-peers" >
+		<java className="net.sourceforge.jnipp.main.Main" fork="yes" dir="${src.dir}/games/peers">
+			<arg line="-projectFile aaaaproject-peers.xml"/>
+			<classpath>
+				<pathelement location="${env.JNIPP_HOME}/lib/jnipp.jar"/>
+				<pathelement location="C:/Program Files/Java/Dev/Android/xmlbeans-1.0.jar"/>
+				<pathelement location="C:/Program Files/Java/Dev/Android/android.jar"/>
+				<pathelement location="${env.JNIPP_HOME}/lib/google-play-services.jar"/>
+				<pathelement location="${intermediate.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</java>
+		<javac srcdir="${src.dir}/games/peers"
+				 destdir="${src.dir}/games/peers"
+				 deprecation="off"
+				 optimize="on">
+			<classpath>
+				<pathelement location="C:/Program Files/Java/Dev/Android/xmlbeans-1.0.jar"/>
+				<pathelement location="C:/Program Files/Java/Dev/Android/android.jar"/>
+				<pathelement location="${env.JNIPP_HOME}/lib/google-play-services.jar"/>
+				<pathelement location="${intermediate.dir}"/>
+				<pathelement path="${java.class.path}"/>
+			</classpath>
+		</javac>
+	</target>
+	
+	<target name="native" depends="generate-proxy,generate-peers,generate-proxy-hard">
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}/tutorial" executable="nmake.exe">
+			<arg line="/f tutorial.mak CFG=&quot;Debug&quot; all"/>
+		</exec>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}/tutorial" executable="nmake.exe">
+			<arg line="/f tutorial.mak CFG=&quot;Release&quot; all"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${src.dir}/tutorial" executable="gmake">
+			<arg line="all"/>
+		</exec>
+		<copy todir="${target.dir}" flatten="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.dll"/>
+				<include name="**/*.so"/>
+			</fileset>
+		</copy>
+		<chmod perm="ugo+rwx">
+			<fileset dir="${target.dir}">
+				<include name="**/*.so"/>
+			</fileset>
+		</chmod>
+	</target>
+	
+	<target name="run">
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="." executable="cmd.exe">
+			<env key="Path" path="${java.library.path};${env.JNIPP_HOME}/lib;${env.JNIPP_HOME}/build/demo/peergen/tutorial"/>
+			<env key="CLASSPATH" path="${java.class.path};${env.JNIPP_HOME}/lib/jnipp.jar;${intermediate.dir}"/>
+			<arg value="/c"/>
+			<arg value="java demo.peergen.tutorial.Main"/>
+		</exec>
+		<exec os="Linux Solaris SunOS" dir="." executable="sh">
+			<env key="LD_LIBRARY_PATH" path="${env.LD_LIBRARY_PATH}:${env.JNIPP_HOME}/lib:${env.JNIPP_HOME}/build/demo/peergen/tutorial"/>
+			<env key="CLASSPATH" path="${java.class.path};${env.JNIPP_HOME}/lib/jnipp.jar;${intermediate.dir}"/>
+			<arg value="-c"/>
+			<arg value="java demo.peergen.tutorial.Main"/>
+		</exec>
+	</target>
+
+	<target name="clean">
+		<delete dir="${intermediate.dir}/demo/peergen/tutorial"/>
+		<delete dir="${target.dir}"/>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}" executable="nmake.exe">
+			<arg line="/f tutorial.mak CFG=&quot;tutorial - Win32 Debug&quot; clean"/>
+		</exec>
+		<exec os="Windows NT Windows 95 Windows 98 Windows 2000" dir="${src.dir}" executable="nmake.exe">
+			<arg line="/f tutorial.mak CFG=&quot;tutorial - Win32 Release&quot; clean"/>
+		</exec>
+		<exec os="Linux SunOS Solaris" dir="${src.dir}" executable="gmake">
+			<arg line="clean"/>
+		</exec>
+	</target>
+
+	<target name="rebuild" depends="clean,native">
+	</target>
+
+	<target name="default" depends="native">
+	</target>
+
+</project>
+

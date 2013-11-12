@@ -27,6 +27,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class ComputeBooleanElementType<1>
 			{
 			public:
@@ -110,6 +111,7 @@ namespace net
 				}
 			};
 			
+			template<>
 			class JBooleanArrayHelper<1>
 			{
 			private:

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="simple" targetType="shlib" targetName="SimpleDemo">
+	<peergen destructive="false">
+		<input-classes>
+			<input-class name="demo.chapters.shi.simple.SimpleDemo"/>
+		</input-classes>
+	</peergen>
+	<nmakefile name="simple.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

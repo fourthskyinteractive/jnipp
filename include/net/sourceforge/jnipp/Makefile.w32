@@ -1,0 +1,33 @@
+INCLUDES= -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32
+DBGCPPFLAGS= -O0 -g -D__IncludedFromCore $(INCLUDES)
+RELCPPFLAGS= -O3 -D__IncludedFromCore $(INCLUDES)
+DBGLIBS= -lstdc++
+RELLIBS= -lstdc++
+
+Debug/%.o:	%.cpp
+		g++ $(DBGCPPFLAGS) -c -Wall $< -o $@
+
+Release/%.o:	%.cpp
+		g++ $(RELCPPFLAGS) -c -Wall $< -o $@
+
+SRCS=$(wildcard *.cpp)
+DBGOBJS=$(patsubst %.cpp, Debug/%.o, $(SRCS))
+RELOBJS=$(patsubst %.cpp, Release/%.o, $(SRCS))
+
+all:		Debug Release
+
+Debug:		dirs $(DBGOBJS)
+				dllwrap --output-lib=Debug/libJNIPPCore_d.lib --dllname=Debug/libJNIPPCore_d.dll --driver-name=gcc $(DBGOBJS) $(DBGLIBS)
+
+Release:		dirs $(RELOBJS)
+				dllwrap --output-lib=Release/libJNIPPCore.lib --dllname=Release/libJNIPPCore.dll --driver-name=gcc $(RELOBJS) $(RELLIBS)
+
+dirs:		$(dummy)
+			@mkdir Debug
+			@mkdir Release
+
+clean:	$(dummy)
+			@rmdir /q /s Debug
+			@rmdir /q /s Release
+
+rebuild:	clean dirs Debug Release

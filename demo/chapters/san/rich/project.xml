@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="rich" targetType="exe" targetName="richDemo" usePartialSpec="false">
+	<proxygen>
+		<input-classes>
+			<input-class name="demo.chapters.san.rich.RichDemo"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="rich.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

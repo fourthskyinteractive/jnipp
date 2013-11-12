@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<project name="primArr" targetType="shlib" targetName="PrimArrDemo" usePartialSpec="false">
+	<peergen useInheritance="true" useRichTypes="true">
+		<input-classes>
+			<input-class name="demo.chapters.go.primArr.PrimArrDemo"/>
+		</input-classes>
+		<proxygen useRichTypes="false"/>
+	</peergen>
+	<nmakefile name="primArr.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

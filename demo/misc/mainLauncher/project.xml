@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="mainLauncher" targetType="exe" targetName="jnipp">
+	<proxygen useRichTypes="false">
+		<input-classes>
+			<input-class name="net.sourceforge.jnipp.main.Main"/>
+		</input-classes>
+	</proxygen>
+	<nmakefile name="mainLauncher.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="destructive" targetType="shlib" targetName="DestructiveDemo">
+	<peergen destructive="true">
+		<input-classes>
+			<input-class name="demo.chapters.shi.destructive.DestructiveDemo"/>
+		</input-classes>
+	</peergen>
+	<nmakefile name="destructive.mak"/>
+	<gnumakefile name="Makefile"/>
+</project>
+
