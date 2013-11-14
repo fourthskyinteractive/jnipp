@@ -1,13 +1,18 @@
 package net.sourceforge.jnipp.peerGen;
 
 import java.util.Iterator;
+
 import net.sourceforge.jnipp.common.ClassNode;
 import net.sourceforge.jnipp.project.Project;
 import net.sourceforge.jnipp.project.PeerGenSettings;
+
 import java.util.Collection;
 import java.util.ArrayList;
+
 import net.sourceforge.jnipp.main.DependencyData;
+
 import java.io.File;
+
 import net.sourceforge.jnipp.project.ProjectFormatException;
 import net.sourceforge.jnipp.proxyGen.ProxyGenerator;
 import net.sourceforge.jnipp.project.ProxyGenSettings;

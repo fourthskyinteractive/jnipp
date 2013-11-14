@@ -4,8 +4,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.w3c.dom.NodeList;
 
 /**
@@ -23,6 +25,9 @@ import org.w3c.dom.NodeList;
 
 public class ProxyGenSettings 
 {
+	public static final String LANGUAGE_CPP = "cpp";
+	public static final String LANGUAGE_CS = "cs";
+	
 	/**
 	 * Generate field accessor methods?
 	 */
@@ -50,6 +55,11 @@ public class ProxyGenSettings
 	private boolean generateInnerClasses = false;
 	
 	private int recursionLevel = -1;
+	
+	/**
+	 * Language for proxy creation
+	 */
+	private String language = LANGUAGE_CPP;
 	
 	/**
 	 * Reference to the owning <code>Project</code> instance.
@@ -120,6 +130,12 @@ public class ProxyGenSettings
 			generateInnerClasses = Boolean.valueOf( elementNode.getAttribute( "innerClasses" ) ).booleanValue();
 		if ( elementNode.hasAttribute( "recursionLevel" ) == true )
 			recursionLevel = Integer.valueOf( elementNode.getAttribute( "recursionLevel" ) ).intValue();
+		if ( elementNode.hasAttribute("language") == true)  {
+			language = elementNode.getAttribute("language").toLowerCase();
+			if (!LANGUAGE_CPP.equals(language) && !LANGUAGE_CS.equals(language)) {
+				language = LANGUAGE_CPP;
+			}
+		}
 
 		NodeList childNodes = elementNode.getChildNodes();
 		for ( int i = 0; i < childNodes.getLength(); ++i )
@@ -275,6 +291,14 @@ public class ProxyGenSettings
 		this.recursionLevel = recursionLevel;
 	}
 	
+	public String getLanguage() {
+		return language;
+	}
+	
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 	/**
 	 * Public accessor for the class names.
 	 *
@@ -338,6 +362,7 @@ public class ProxyGenSettings
 		node.setAttribute( "useRichTypes", String.valueOf( useRichTypes ) );
 		node.setAttribute( "innerClasses", String.valueOf( generateInnerClasses ) );
 		node.setAttribute( "recursionLevel", String.valueOf( recursionLevel ) );
+		node.setAttribute( "language", String.valueOf( language ) );
 		
 		Element classesElement = null;
 		

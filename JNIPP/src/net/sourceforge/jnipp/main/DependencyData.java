@@ -1,6 +1,5 @@
 package net.sourceforge.jnipp.main;
 
-import java.io.File;
 
 /**
  * Helper class for makefile generators.
@@ -14,13 +13,13 @@ public class DependencyData
 {
    private String path = null;
    private String headerFileName = null;
-   private String cppFileName = null;
+   private String implFileName = null;
    
-   public DependencyData(String path, String headerFileName, String cppFileName)
+   public DependencyData(String path, String headerFileName, String implFileName)
    {
       this.path = path;
       this.headerFileName = headerFileName;
-      this.cppFileName = cppFileName;
+      this.implFileName = implFileName;
    }
    
    public String getPath()
@@ -33,9 +32,9 @@ public class DependencyData
       return headerFileName;
    }
    
-   public String getCPPFileName()
+   public String getImplFileName()
    {
-      return cppFileName;
+      return implFileName;
    }
    
    public String getFullHeaderFileName()
@@ -45,10 +44,10 @@ public class DependencyData
       return path + /*File.separatorChar*/ '/' + headerFileName;
    }
    
-   public String getFullCPPFileName()
+   public String getFullImplFileName()
    {
       if ( path == null || path.equals( "" ) == true )
-         return cppFileName;
-      return path + /*File.separatorChar*/ '/' + cppFileName;
+         return implFileName;
+      return path + /*File.separatorChar*/ '/' + implFileName;
    }
 }

@@ -31,7 +31,7 @@ public class GenerateCodeAction implements ActionListener
 	 * 
 	 * @param e The ActionEvent object for the action fired.
 	 * @see net.sourceforge.jnipp.gui.peergen.PeerGenerator
-	 * @see net.sourceforge.jnipp.gui.proxygen.ProxyGenerator
+	 * @see net.sourceforge.jnipp.proxyGen.cpp.ProxyGenerator.ProxyGenerator
 	 */
 	public void actionPerformed(ActionEvent e)
 	{

@@ -1,9 +1,12 @@
-package net.sourceforge.jnipp.proxyGen;
+package net.sourceforge.jnipp.proxyGen.cpp;
 
 import java.util.Iterator;
 import java.util.HashMap;
+
 import net.sourceforge.jnipp.common.*;
 import net.sourceforge.jnipp.project.ProxyGenSettings;
+import net.sourceforge.jnipp.proxyGen.ProxyHeaderGenerator;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -19,7 +22,7 @@ import java.util.ArrayList;
  * @version $Revision: 1.40 $
  */
 
-public class CPPProxyHeaderGenerator
+public class CPPProxyHeaderGenerator implements ProxyHeaderGenerator
 {
 	/**
 	 * Settings specifying the code generation options.
@@ -63,11 +66,11 @@ public class CPPProxyHeaderGenerator
 		String fullFileName = proxyGenSettings.getProject().getCPPOutputDir() + /*File.separatorChar*/ '/';
 		if ( root.getPackageName().equals( "" ) == true ) {
 			fullFileName = root.getCPPClassName() + ".h";
-			
+
 		} else {
 			//fullFileName = root.getPackageName().replace( '.', File.separatorChar ) + File.separatorChar + root.getCPPClassName() + ".h";
 			fullFileName = root.getPackageName().replace( '.', '_' ) + '_' + root.getCPPClassName() + ".h";
-			
+
 		}
 
 		FormattedFileWriter writer = new FormattedFileWriter( fullFileName, true );
@@ -180,7 +183,7 @@ public class CPPProxyHeaderGenerator
 	 * @exception java.io.IOException
 	 * @see #generate
 	 */
-	private void generateIncludes(ClassNode root, FormattedFileWriter writer)
+	public void generateIncludes(ClassNode root, FormattedFileWriter writer)
 			throws java.io.IOException
 			{
 		HashMap alreadyGenerated = new HashMap();
@@ -215,7 +218,7 @@ public class CPPProxyHeaderGenerator
 					if ( headerFile.equals( "" ) == false ) {
 						//headerFile += /*File.separatorChar*/'/';
 						headerFile += '_';
-						
+
 					}
 					headerFile += root.getSuperClass().getCPPClassName() + ".h";
 					writer.outputLine( "#include \"" + headerFile + "\"" );
@@ -235,7 +238,7 @@ public class CPPProxyHeaderGenerator
 						if ( headerFile.equals( "" ) == false ) {
 							//headerFile += /*File.separatorChar*/ '/';
 							headerFile += '_';
-							
+
 						}
 						headerFile += cn.getCPPClassName() + ".h";
 						writer.outputLine( "#include \"" + headerFile + "\"" );
@@ -266,7 +269,7 @@ public class CPPProxyHeaderGenerator
 							if ( headerFile.equals( "" ) == false ) {
 								//headerFile += /*File.separatorChar*/ '/';
 								headerFile += '_';
-								
+
 							}
 							headerFile += cn.getComponentType().getCPPClassName() + ".h";
 							componentTypeIncludes.add( headerFile );
@@ -281,7 +284,7 @@ public class CPPProxyHeaderGenerator
 							if ( headerFile.equals( "" ) == false ) {
 								//headerFile += /*File.separatorChar*/ '/';
 								headerFile += '_';
-								
+
 							}
 							headerFile += cn.getCPPClassName() + (cn.needsProxy() == true ? "Forward.h" : ".h");
 							otherIncludes.add( headerFile );
@@ -318,9 +321,8 @@ public class CPPProxyHeaderGenerator
 	 * @exception java.io.IOException
 	 * @see #generate
 	 */
-	private void generateCtors(ClassNode root, FormattedFileWriter writer)
-			throws java.io.IOException
-			{
+	public void generateCtors(ClassNode root, FormattedFileWriter writer) throws java.io.IOException
+	{
 		writer.outputLine( "// constructors" );
 		writer.outputLine( root.getCPPClassName() + "(jobject obj);" );
 		Iterator it = root.getConstructors();
@@ -369,7 +371,7 @@ public class CPPProxyHeaderGenerator
 	 * @see #generate
 	 * @see net.sourceforge.jnipp.project#getGenerateAttributeGetters
 	 */
-	private void generateGetters(ClassNode root, FormattedFileWriter writer) throws java.io.IOException
+	public void generateGetters(ClassNode root, FormattedFileWriter writer) throws java.io.IOException
 	{
 		HashMap methodNames = new HashMap();
 		Iterator it = root.getMethods();
@@ -480,7 +482,7 @@ public class CPPProxyHeaderGenerator
 	 * @exception java.io.IOException
 	 * @see #generate
 	 */
-	private void generateMethods(ClassNode root, FormattedFileWriter writer)
+	public void generateMethods(ClassNode root, FormattedFileWriter writer)
 			throws java.io.IOException
 			{
 		writer.outputLine( "// methods" );

@@ -2,10 +2,18 @@ package net.sourceforge.jnipp.proxyGen;
 
 import java.util.HashMap;
 import java.util.Iterator;
+
 import net.sourceforge.jnipp.common.ClassNode;
 import net.sourceforge.jnipp.project.ProxyGenSettings;
+import net.sourceforge.jnipp.proxyGen.cpp.CPPProxyForwardHeaderGenerator;
+import net.sourceforge.jnipp.proxyGen.cpp.CPPProxyHeaderGenerator;
+import net.sourceforge.jnipp.proxyGen.cpp.CPPProxyImplGenerator;
+import net.sourceforge.jnipp.proxyGen.unity.CSProxyImplGenerator;
+
 import java.util.Collection;
+
 import net.sourceforge.jnipp.main.DependencyData;
+
 import java.io.File;
 
 /**
@@ -28,7 +36,7 @@ public class ProxyGenerator
 	 * This variable contains a reference to the <code>CPPProxyHeaderGenerator</code>
 	 * instance utilized to generate the declaration file for the C++ proxy class.
 	 */
-	private static CPPProxyHeaderGenerator headerGen = new CPPProxyHeaderGenerator();
+	private static ProxyHeaderGenerator cppHeaderGen = new CPPProxyHeaderGenerator();
 
 	/**
 	 * Implementation file generator.
@@ -36,9 +44,15 @@ public class ProxyGenerator
 	 * This variable contains a reference to the <code>CPPProxyImplGenerator</code>
 	 * instance utilized to generate the implementation file for the C++ proxy class.
 	 */
-	private static CPPProxyImplGenerator implGen = new CPPProxyImplGenerator();
+	private static ProxyImplGenerator cppImplGen = new CPPProxyImplGenerator();
 
-	private static CPPProxyForwardHeaderGenerator forwGen = new CPPProxyForwardHeaderGenerator();
+	private static ProxyForwardHeaderGenerator cppForwGen = new CPPProxyForwardHeaderGenerator();
+	
+	/**
+	 * 
+	 * 
+	 */
+	private static ProxyImplGenerator csImplGen = new CSProxyImplGenerator();
 
 	/**
 	 * Public entry point.
@@ -53,9 +67,8 @@ public class ProxyGenerator
 	 * @see net.sourceforge.jnipp.common.ClassNode
 	 * @see net.sourceforge.jnipp.project.Project
 	 */
-	public static Collection generate(ProxyGenSettings proxyGenSettings)
-			throws ClassNotFoundException, java.io.IOException
-			{
+	public static Collection generate(ProxyGenSettings proxyGenSettings) throws ClassNotFoundException, java.io.IOException
+	{
 		HashMap alreadyGenerated = new HashMap();
 		Iterator inputClassIterator = proxyGenSettings.getClassNames();
 		while ( inputClassIterator.hasNext() == true )
@@ -65,7 +78,7 @@ public class ProxyGenerator
 		}
 
 		return alreadyGenerated.values();
-			}
+	}
 
 	/**
 	 * Recursive code generation method.
@@ -82,12 +95,73 @@ public class ProxyGenerator
 	 * @exception java.io.IOException
 	 * @see net.sourceforge.jnipp.common.ClassNode
 	 */
-	private static void generate(ClassNode classNode, HashMap alreadyGenerated, ProxyGenSettings proxyGenSettings)
-			throws ClassNotFoundException, java.io.IOException
-			{
+	private static void generate(ClassNode classNode, HashMap alreadyGenerated, ProxyGenSettings proxyGenSettings) throws ClassNotFoundException, java.io.IOException
+	{
 		if ( classNode.isBuiltIn() == true || alreadyGenerated.containsKey( classNode.getFullyQualifiedClassName() ) == true )
 			return;
+		
+		if (ProxyGenSettings.LANGUAGE_CPP.equals(proxyGenSettings.getLanguage()))
+			generateCPP(classNode, alreadyGenerated, proxyGenSettings);
 
+		else if (ProxyGenSettings.LANGUAGE_CS.equals(proxyGenSettings.getLanguage()))
+			generateCS(classNode, alreadyGenerated, proxyGenSettings);
+		
+		else 
+			throw new IllegalStateException("language shall be \"cpp\" or \"cs\"");
+	}
+	
+	private static void generateCS(ClassNode classNode, HashMap alreadyGenerated, ProxyGenSettings proxyGenSettings) throws ClassNotFoundException, java.io.IOException
+	{
+		System.out.println( "generating C# Proxy Class for " + classNode.getFullyQualifiedClassName() + " ..." );
+		
+		alreadyGenerated.put( classNode.getFullyQualifiedClassName(), 
+				new DependencyData( null, null, classNode.getCPPClassName() + ".cs" ) );
+		
+		csImplGen.generate(classNode, proxyGenSettings);
+		
+		if ( proxyGenSettings.getUseRichTypes() == true )
+		{
+			Iterator deps = classNode.getDependencies();
+			while ( deps.hasNext() == true )
+				generate( (ClassNode) deps.next(), alreadyGenerated, proxyGenSettings );
+		}
+		else
+			if ( proxyGenSettings.getRecursionLevel() > 0 )
+			{
+				int newLevel = proxyGenSettings.getRecursionLevel() - 1;
+				proxyGenSettings.setRecursionLevel( newLevel );
+				Iterator deps = classNode.getDependencies();
+				while ( deps.hasNext() == true )
+					generate( (ClassNode) deps.next(), alreadyGenerated, proxyGenSettings );
+			}
+
+		if ( proxyGenSettings.getUseInheritance() == true )
+		{
+			if ( classNode.isInterface() == false )
+			{
+				if ( classNode.getSuperClass() != null )
+					generate( classNode.getSuperClass(), alreadyGenerated, proxyGenSettings );
+			}
+			else
+			{
+				Iterator intfcs = classNode.getInterfaces();
+				while ( intfcs.hasNext() == true )
+					generate( (ClassNode) intfcs.next(), alreadyGenerated, proxyGenSettings );
+			}
+		}
+
+		/*
+		if ( proxyGenSettings.getGenerateInnerClasses() == true )
+		{
+			Iterator inners = classNode.getInnerClasses();
+			while ( inners.hasNext() == true )
+				generate( (ClassNode) inners.next(), alreadyGenerated, proxyGenSettings );
+		}
+		 */
+	}
+
+	private static void generateCPP(ClassNode classNode, HashMap alreadyGenerated, ProxyGenSettings proxyGenSettings) throws ClassNotFoundException, java.io.IOException
+	{
 		System.out.println( "generating C++ Proxy Class for " + classNode.getFullyQualifiedClassName() + " ..." );
 
 		alreadyGenerated.put( classNode.getFullyQualifiedClassName(), 
@@ -95,9 +169,9 @@ public class ProxyGenerator
 						classNode.getCPPClassName() + ".h",
 						classNode.getCPPClassName() + ".cpp" ) );
 
-		forwGen.generate( classNode, proxyGenSettings );
-		headerGen.generate( classNode, proxyGenSettings );
-		implGen.generate( classNode, proxyGenSettings );
+		cppForwGen.generate( classNode, proxyGenSettings );
+		cppHeaderGen.generate( classNode, proxyGenSettings );
+		cppImplGen.generate( classNode, proxyGenSettings );
 
 		if ( proxyGenSettings.getUseRichTypes() == true )
 		{
@@ -138,5 +212,5 @@ public class ProxyGenerator
 				generate( (ClassNode) inners.next(), alreadyGenerated, proxyGenSettings );
 		}
 		 */
-			}
+	}
 }

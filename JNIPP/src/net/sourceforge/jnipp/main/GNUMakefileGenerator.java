@@ -82,13 +82,13 @@ public class GNUMakefileGenerator
       while ( depIter.hasNext() == true )
       {
          DependencyData current = (DependencyData) depIter.next();
-         writer.output( " " + gnuMakefileSettings.getProject().getCPPOutputDir() + File.separator + current.getFullCPPFileName() );
+         writer.output( " " + gnuMakefileSettings.getProject().getCPPOutputDir() + File.separator + current.getFullImplFileName() );
       }
       depIter = proxyGenDependencies.iterator();
       while ( depIter.hasNext() == true )
       {
          DependencyData current = (DependencyData) depIter.next();
-         writer.output( " " + gnuMakefileSettings.getProject().getCPPOutputDir() + File.separator + current.getFullCPPFileName() );
+         writer.output( " " + gnuMakefileSettings.getProject().getCPPOutputDir() + File.separator + current.getFullImplFileName() );
       }
       writer.newLine( 1 );
       writer.outputLine( "DBGOBJS=$(patsubst %.cpp, %_d.o, $(SRCS))" );

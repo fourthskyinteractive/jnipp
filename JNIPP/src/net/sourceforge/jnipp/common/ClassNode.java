@@ -231,9 +231,8 @@ public class ClassNode
 	 * @exception ClassNotFoundException
 	 * @see #loadedClassNodes
 	 */
-	public static ClassNode getClassNode(String fullyQualifiedClassName)
-			throws ClassNotFoundException
-			{
+	public static ClassNode getClassNode(String fullyQualifiedClassName) throws ClassNotFoundException
+	{
 		ClassNode node = (ClassNode) loadedClassNodes.get( fullyQualifiedClassName );
 		if ( node == null )
 		{
@@ -243,7 +242,7 @@ public class ClassNode
 		}
 
 		return node;
-			}
+	}
 
 	/**
 	 * Returns <emph>true</emph> if the type is primitive.
@@ -438,9 +437,8 @@ public class ClassNode
 	 * @see #init
 	 * @see #dependencyList
 	 */
-	private void generateDependencyList()
-			throws ClassNotFoundException
-			{
+	private void generateDependencyList() throws ClassNotFoundException
+	{
 		Iterator ctorIter = ctors.iterator();
 		while ( ctorIter.hasNext() == true )
 		{
@@ -509,7 +507,7 @@ public class ClassNode
 
 		if ( dependencyList.contains( this ) == true )
 			dependencyList.remove( this );
-			}
+	}
 
 	/**
 	 * Accessor to query if this is an interface.
@@ -647,6 +645,14 @@ public class ClassNode
 			return getCPPClassName();
 
 		return namespace + "::" + getCPPClassName();
+	}
+	
+	public String getFullyQualifiedCSClassName()
+	{
+		if ( namespace.equals( "" ) == true )
+			return getCPPClassName();
+
+		return (namespace + "::" + getCPPClassName()).replaceAll("::", ".");
 	}
 
 	public String getPackageName()

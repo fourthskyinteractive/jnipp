@@ -1,9 +1,12 @@
-package net.sourceforge.jnipp.proxyGen;
+package net.sourceforge.jnipp.proxyGen.cpp;
 
 import java.util.Iterator;
 import java.util.HashMap;
+
 import net.sourceforge.jnipp.common.*;
 import net.sourceforge.jnipp.project.ProxyGenSettings;
+import net.sourceforge.jnipp.proxyGen.ProxyImplGenerator;
+
 import java.io.File;
 
 /**
@@ -18,7 +21,7 @@ import java.io.File;
  * @version $Revision: 1.40 $
  */
 
-public class CPPProxyImplGenerator
+public class CPPProxyImplGenerator implements ProxyImplGenerator
 {
 	/**
 	 * Settings specifying the code generation options.
@@ -297,7 +300,7 @@ public class CPPProxyImplGenerator
 	 * @exception java.io.IOException
 	 * @see #generate
 	 */
-	private void generateCtors(ClassNode root, FormattedFileWriter writer)
+	public void generateCtors(ClassNode root, FormattedFileWriter writer)
 			throws java.io.IOException
 			{
 		writer.outputLine( "// constructors" );
@@ -358,6 +361,7 @@ public class CPPProxyImplGenerator
 				}
 				else
 					writer.output( currentParam.getPlainJNITypeName() + " p" + currentIndex++ );
+				
 				if ( params.hasNext() == true )
 					writer.output( ", " );
 			}
@@ -410,7 +414,7 @@ public class CPPProxyImplGenerator
 			writer.outputLine( "}" );
 			writer.newLine( 1 );
 		}
-			}
+	}
 
 	/**
 	 * Private helper method to generate the attribute "getters" for the generated
@@ -429,7 +433,7 @@ public class CPPProxyImplGenerator
 	 * @see #generate
 	 * @see net.sourceforge.jnipp.project#getGenerateAttributeGetters
 	 */
-	private void generateGetters(ClassNode root, FormattedFileWriter writer)
+	public void generateGetters(ClassNode root, FormattedFileWriter writer)
 			throws java.io.IOException
 			{
 		HashMap methodNames = new HashMap();
@@ -502,7 +506,7 @@ public class CPPProxyImplGenerator
 	 * @see #generate
 	 * @see net.sourceforge.jnipp.project#getGenerateAttributeSetters
 	 */
-	private void generateSetters(ClassNode root, FormattedFileWriter writer)
+	public void generateSetters(ClassNode root, FormattedFileWriter writer)
 			throws java.io.IOException
 			{
 		HashMap methodNames = new HashMap();
@@ -569,7 +573,7 @@ public class CPPProxyImplGenerator
 	 * @exception java.io.IOException
 	 * @see #generate
 	 */
-	private void generateMethods(ClassNode root, FormattedFileWriter writer)
+	public void generateMethods(ClassNode root, FormattedFileWriter writer)
 			throws java.io.IOException
 			{
 		writer.outputLine( "// methods" );

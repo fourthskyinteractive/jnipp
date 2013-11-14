@@ -70,13 +70,13 @@ public class NMakefileGenerator
       while ( depIter.hasNext() == true )
       {
          DependencyData current = (DependencyData) depIter.next();
-         writer.output( " " + nMakefileSettings.getProject().getCPPOutputDir() + File.separator + current.getFullCPPFileName() );
+         writer.output( " " + nMakefileSettings.getProject().getCPPOutputDir() + File.separator + current.getFullImplFileName() );
       }
       depIter = proxyGenDependencies.iterator();
       while ( depIter.hasNext() == true )
       {
          DependencyData current = (DependencyData) depIter.next();
-         writer.output( " " + nMakefileSettings.getProject().getCPPOutputDir() + File.separator + current.getFullCPPFileName() );
+         writer.output( " " + nMakefileSettings.getProject().getCPPOutputDir() + File.separator + current.getFullImplFileName() );
       }
       writer.newLine( 1 );
       writer.outputLine( "OBJS=$(SOURCES:.cpp=.obj)" );

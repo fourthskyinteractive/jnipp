@@ -4,10 +4,12 @@ import net.sourceforge.jnipp.common.CommandLineParser;
 import net.sourceforge.jnipp.project.Project;
 import net.sourceforge.jnipp.peerGen.PeerGenerator;
 import net.sourceforge.jnipp.proxyGen.ProxyGenerator;
+
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.lang.ClassNotFoundException;
 import java.io.IOException;
+
 import net.sourceforge.jnipp.project.PeerGenSettings;
 import net.sourceforge.jnipp.project.ProxyGenSettings;
 import net.sourceforge.jnipp.project.ProjectFormatException;
