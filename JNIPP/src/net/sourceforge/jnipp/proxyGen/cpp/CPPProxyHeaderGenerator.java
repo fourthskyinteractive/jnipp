@@ -122,7 +122,7 @@ public class CPPProxyHeaderGenerator implements ProxyHeaderGenerator
 		writer.newLine( 1 );
 		writer.outputLine( "protected:" );
 		writer.incTabLevel();
-		writer.outputLine( "//" + root.getCPPClassName() + "(void* unused);" );
+		writer.outputLine( root.getCPPClassName() + "(void* unused);" );
 		writer.outputLine( "virtual jobject _getPeerObject() const;" );
 		writer.decTabLevel();
 		writer.newLine( 1 );
@@ -337,7 +337,9 @@ public class CPPProxyHeaderGenerator implements ProxyHeaderGenerator
 				ClassNode currentParam = (ClassNode) params.next();
 				if ( proxyGenSettings.getUseRichTypes() == true )
 				{
-					if ( currentParam.getFullyQualifiedClassName().equals( root.getFullyQualifiedClassName() ) == true && count == 0 && params.hasNext() == false )
+					if ( currentParam.getFullyQualifiedClassName().equals( root.getFullyQualifiedClassName() ) == true && 
+						 count == 0 && 
+						 params.hasNext() == false )
 						writer.output( currentParam.getJNITypeName( proxyGenSettings.getProject().getUsePartialSpec() ) + "& p" + currentIndex++ );
 					else
 						writer.output( currentParam.getJNITypeName( proxyGenSettings.getProject().getUsePartialSpec() ) + " p" + currentIndex++ );

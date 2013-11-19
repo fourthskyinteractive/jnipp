@@ -3,8 +3,9 @@
 <project name="simple" targetType="exe" targetName="simpleDemo" >
 	<proxygen useRichTypes="true" useInheritance="true" recursionLevel="1" language="cs">
 		<input-classes>
-			<input-class name="demo.chapters.san.simple.SimpleDemo"/>
-			<input-class name="java.lang.Integer"/>
+			<!--<input-class name="demo.chapters.san.simple.SimpleDemo"/>-->
+			<input-class name="java.lang.Object"/>
+			<!--<input-class name="java.lang.Integer"/>-->
 		</input-classes>
 	</proxygen>
 	<nmakefile name="simple.mak"/>

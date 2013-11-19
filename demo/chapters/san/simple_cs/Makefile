@@ -32,7 +32,7 @@ endif
 %.o:	%.cpp
 			g++ $(RELCPPFLAGS) $< -o $@
 
-SRCS=  .\InputStream.cs .\Attributes_Name.cs .\Proxy.cs .\Field.cs .\URLStreamHandler.cs .\GenericDeclaration.cs .\CodeSource.cs .\Certificate.cs .\Class.cs .\Timestamp.cs .\Serializable.cs .\Object.cs .\Proxy_Type.cs .\List.cs .\URLStreamHandlerFactory.cs .\Package.cs .\Integer.cs .\Permission.cs .\PublicKey.cs .\Attributes.cs .\Number.cs .\Annotation.cs .\TypeVariable.cs .\Type.cs .\Iterator.cs .\Iterable.cs .\Principal.cs .\ContentHandlerFactory.cs .\Void.cs .\PermissionCollection.cs .\AccessibleObject.cs .\Enumeration.cs .\ContentHandler.cs .\Constructor.cs .\CodeSigner.cs .\Map.cs .\URLConnection.cs .\Package_1.cs .\Method.cs .\Key.cs .\ListIterator.cs .\CertPath.cs .\Set.cs .\Collection.cs .\FileNameMap.cs .\SocketAddress.cs .\URI.cs .\Manifest.cs .\Date.cs .\ClassLoader.cs .\SimpleDemo.cs .\URL.cs .\ProtectionDomain.cs .\OutputStream.cs .\Enum.cs
+SRCS=  .\Enumeration.cs .\InputStream.cs .\CodeSigner.cs .\Constructor.cs .\ContentHandler.cs .\URLConnection.cs .\Map.cs .\Proxy.cs .\Method.cs .\Field.cs .\Key.cs .\URLStreamHandler.cs .\GenericDeclaration.cs .\ListIterator.cs .\CodeSource.cs .\Certificate.cs .\CertPath.cs .\Class.cs .\Set.cs .\Timestamp.cs .\Serializable.cs .\Collection.cs .\FileNameMap.cs .\Object.cs .\List.cs .\Proxy_Type.cs .\SocketAddress.cs .\Package.cs .\URLStreamHandlerFactory.cs .\Permission.cs .\URI.cs .\Date.cs .\PublicKey.cs .\ClassLoader.cs .\Annotation.cs .\TypeVariable.cs .\Type.cs .\Iterator.cs .\ProtectionDomain.cs .\URL.cs .\Iterable.cs .\Principal.cs .\OutputStream.cs .\PermissionCollection.cs .\ContentHandlerFactory.cs .\AccessibleObject.cs .\Enum.cs
 
 DBGOBJS=$(patsubst %.cpp, %_d.o, $(SRCS))
 RELOBJS=$(patsubst %.cpp, %.o, $(SRCS))

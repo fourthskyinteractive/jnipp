@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 
+import net.sourceforge.jnipp.project.ProxyGenSettings;
+
 /**
  * Node containing class-specific data for use by the code generators.
  *
@@ -308,9 +310,8 @@ public class ClassNode
 	 * @exception ClassNotFoundException
 	 * @see #getClassNode
 	 */
-	public void init()
-			throws ClassNotFoundException
-			{
+	public void init() throws ClassNotFoundException
+	{
 		if ( isTypePrimitive( fullyQualifiedClassName ) == true )
 		{
 			primitive = true;
@@ -360,62 +361,64 @@ public class ClassNode
 				if ( needsProxy() == true )
 				{
 					try {
-					Constructor[] declaredCtors = theClass.getDeclaredConstructors();
-					Arrays.sort( declaredCtors,
-							new Comparator()
-					{
-						public int compare(Object o1, Object o2) { return o1.toString().compareTo( o2.toString() ); }
-						public boolean equals(Object obj) { return false; }
-					} );
-					for ( int i = 0; i < declaredCtors.length; ++i )
-						ctors.add( new MethodNode( this, declaredCtors[i] ) );
+						Class sc = theClass.getSuperclass();
+						if ( sc != null )
+							superClass = ClassNode.getClassNode( theClass.getSuperclass().getName() );
 
-					//Method[] declaredMethods = theClass.getDeclaredMethods();
-					Method[] declaredMethods = theClass.getMethods();
-					Arrays.sort( declaredMethods,
-							new Comparator()
-					{
-						public int compare(Object o1, Object o2) { return o1.toString().compareTo( o2.toString() ); }
-						public boolean equals(Object obj) { return false; }
-					} );
-					for ( int i = 0; i < declaredMethods.length; ++i )
-						// Only store public inner classes
-						if ((declaredMethods[i].getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)
-							methods.add( new MethodNode( this, declaredMethods[i] ) );
+						Class[] intfcs = theClass.getInterfaces();
+						for ( int i = 0; i < intfcs.length; ++i )
+							interfaceList.add( ClassNode.getClassNode( intfcs[i].getName() ) );
+						
+						Constructor[] declaredCtors = theClass.getDeclaredConstructors();
+						Arrays.sort( declaredCtors, new Comparator()
+						{
+							public int compare(Object o1, Object o2) { return o1.toString().compareTo( o2.toString() ); }
+							public boolean equals(Object obj) { return false; }
+						} );
+						for ( int i = 0; i < declaredCtors.length; ++i )
+							// Only store public inner classes
+							if ((declaredCtors[i].getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)
+								ctors.add( new MethodNode( this, declaredCtors[i] ) );
 
-					Class[] declaredClasses = theClass.getDeclaredClasses();
-					Arrays.sort( declaredClasses,
-							new Comparator()
-					{
-						public int compare(Object o1, Object o2) { return o1.toString().compareTo( o2.toString() ); }
-						public boolean equals(Object obj) { return false; }
-					} );
-					for ( int i = 0; i < declaredClasses.length; ++i )
-						// Only store public inner classes
-						if ((declaredClasses[i].getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)
-							innerClasses.add( getClassNode( declaredClasses[i].getName() ) );
+						//Method[] declaredMethods = theClass.getDeclaredMethods();
+						Method[] declaredMethods = theClass.getMethods();
+						Arrays.sort( declaredMethods, new Comparator()
+						{
+							public int compare(Object o1, Object o2) { return o1.toString().compareTo( o2.toString() ); }
+							public boolean equals(Object obj) { return false; }
+						} );
+						for ( int i = 0; i < declaredMethods.length; ++i ) {
+							// Only store public methods
+							if ((declaredMethods[i].getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC) {
+								MethodNode method = new MethodNode( this, declaredMethods[i] );
+								methods.add( method );								
+								
+							}
+						}
 
-					Field[] declaredFields = theClass.getDeclaredFields();
-					Arrays.sort( declaredFields,
-							new Comparator()
-					{
-						public int compare(Object o1, Object o2) { return o1.toString().compareTo( o2.toString() ); }
-						public boolean equals(Object obj) { return false; }
-					} );
-					for ( int i = 0; i < declaredFields.length; ++i ) {
-						// Only store public fields
-						if ((declaredFields[i].getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)
-							fields.add( new FieldNode( declaredFields[i] ) );						
-					}
+						Class[] declaredClasses = theClass.getDeclaredClasses();
+						Arrays.sort( declaredClasses, new Comparator()
+						{
+							public int compare(Object o1, Object o2) { return o1.toString().compareTo( o2.toString() ); }
+							public boolean equals(Object obj) { return false; }
+						} );
+						for ( int i = 0; i < declaredClasses.length; ++i )
+							// Only store public inner classes
+							if ((declaredClasses[i].getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)
+								innerClasses.add( getClassNode( declaredClasses[i].getName() ) );
 
-					Class sc = theClass.getSuperclass();
-					if ( sc != null )
-						superClass = ClassNode.getClassNode( theClass.getSuperclass().getName() );
+						Field[] declaredFields = theClass.getDeclaredFields();
+						Arrays.sort( declaredFields, new Comparator()
+						{
+							public int compare(Object o1, Object o2) { return o1.toString().compareTo( o2.toString() ); }
+							public boolean equals(Object obj) { return false; }
+						} );
+						for ( int i = 0; i < declaredFields.length; ++i ) {
+							// Only store public fields
+							if ((declaredFields[i].getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)
+								fields.add( new FieldNode( declaredFields[i] ) );						
+						}
 
-					Class[] intfcs = theClass.getInterfaces();
-					for ( int i = 0; i < intfcs.length; ++i )
-						interfaceList.add( ClassNode.getClassNode( intfcs[i].getName() ) );
-					
 					} catch (Throwable tw) {
 						System.out.println("Error processing class " + fullyQualifiedClassName);
 					}
@@ -424,7 +427,7 @@ public class ClassNode
 				generateDependencyList();
 			}    
 		}
-			}
+	}
 
 	/**
 	 * Method to generate dependencies for the class.
@@ -570,6 +573,43 @@ public class ClassNode
 	{
 		return isTypeBuiltIn( this );
 	}
+	
+	public boolean isString() 
+	{
+		return getFullyQualifiedClassName().equals( "java.lang.String" );
+	}
+	
+	public boolean isImplemented(MethodNode method) {
+		// First, search in method of this class
+		if (method.getParent() != this) {
+			Iterator it = methods.iterator();
+			while (it.hasNext()) {
+				
+				MethodNode meth = (MethodNode) it.next();
+				if (method.getName().equals(meth.getName()) && method.getJNISignature().equals(meth.getJNISignature()))
+					return true;
+				
+			}
+		}
+		
+		// If not found, search method in super class
+		if (superClass != null) {
+			if (superClass.isImplemented(method))
+				return true;			
+		}
+		
+		// if not found, search in method from interfaces
+		/*
+		Iterator itIntf = interfaceList.iterator();
+		while (itIntf.hasNext()) {
+			ClassNode iface = (ClassNode) itIntf.next();
+			
+			if (iface.isImplemented(method))
+				return true;
+		}
+		*/
+		return false;
+	}
 
 	/**
 	 * Accessor to return the Java class name.
@@ -629,6 +669,12 @@ public class ClassNode
 		return cppName.replace( '$', '_' );
 	}
 
+	public String getCSClassName()
+	{
+		String cppName = Util.getCSIdentifier( className );
+		return cppName.replace( '$', '_' );
+	}
+
 	/**
 	 * Accessor to return the fully-qualified C++ class name.
 	 *
@@ -646,13 +692,13 @@ public class ClassNode
 
 		return namespace + "::" + getCPPClassName();
 	}
-	
+
 	public String getFullyQualifiedCSClassName()
 	{
 		if ( namespace.equals( "" ) == true )
-			return getCPPClassName();
+			return getCSClassName();
 
-		return (namespace + "::" + getCPPClassName()).replaceAll("::", ".");
+		return (namespace + "::" + getCSClassName()).replaceAll("::", ".");
 	}
 
 	public String getPackageName()
@@ -755,6 +801,49 @@ public class ClassNode
 
 	public String getJNITypeName(boolean usePartialSpec)
 	{
+		return getJNITypeName(ProxyGenSettings.LANGUAGE_CPP, usePartialSpec);
+	}
+
+	public String getJNITypeName(String language, boolean usePartialSpec) {
+		if (ProxyGenSettings.LANGUAGE_CPP.equals(language)) 
+			return getJNITypeNameForCPP(usePartialSpec);
+		else if (ProxyGenSettings.LANGUAGE_CS.equals(language))
+			return getJNITypeNameForCS();
+		else 
+			throw new RuntimeException("Language not supported");
+	}
+
+	private String getJNITypeNameForCS() 
+	{
+		if ( needsProxy() == true )
+			return (namespace + "." + getCSClassName()).replaceAll("::", ".");
+
+		if ( getFullyQualifiedClassName().equals( "java.lang.String" ) == true ) 
+		{
+			return "string";
+		}
+
+		// TODO handle array of objects
+		if ( isArray() == true && componentType.isPrimitive() == true )
+			return "J" + 
+					Character.toUpperCase( componentType.getClassName().charAt( 0 ) ) + 
+					componentType.getClassName().substring( 1 ) + 
+					//"ArrayHelper<" + arrayDims + ">";
+					"ArrayHelper";
+
+		// TODO Handle array for C#
+		if ( isArray() == true && componentType.needsProxy() == true )
+			//return "::net::sourceforge::jnipp::PA<" + componentType.getJNITypeName( usePartialSpec ) + ">::ProxyArray<" + arrayDims + ">";
+			return "JObjectArrayHelper<" +componentType.getJNITypeNameForCS() + ">";
+
+		if ( isArray() == true && componentType.getFullyQualifiedClassName().equals( "java.lang.String" ) == true )
+			return "string[]";
+
+		return getPlainJNITypeName(ProxyGenSettings.LANGUAGE_CS);
+	}
+
+	public String getJNITypeNameForCPP(boolean usePartialSpec) 
+	{
 		if ( needsProxy() == true )
 			return "::" + namespace + "::" + getCPPClassName();
 
@@ -763,6 +852,7 @@ public class ClassNode
 			return "::net::sourceforge::jnipp::JStringHelper";
 		}
 
+		// TODO handle array of objects
 		if ( isArray() == true && componentType.isPrimitive() == true )
 			return "::net::sourceforge::jnipp::J" + 
 			Character.toUpperCase( componentType.getClassName().charAt( 0 ) ) + 
@@ -778,11 +868,25 @@ public class ClassNode
 		if ( isArray() == true && componentType.getFullyQualifiedClassName().equals( "java.lang.String" ) == true )
 			return "::net::sourceforge::jnipp::JStringHelperArray<" + arrayDims + ">";
 
-		return getPlainJNITypeName();
+		return getPlainJNITypeName(ProxyGenSettings.LANGUAGE_CPP);
 	}
 
 	public String getPlainJNITypeName()
 	{
+		return getPlainJNITypeName(ProxyGenSettings.LANGUAGE_CPP);
+	}
+
+	public String getPlainJNITypeName(String language) 
+	{
+		if (ProxyGenSettings.LANGUAGE_CPP.equals(language))
+			return getPlainJNITypeNameForCPP();
+		else if (ProxyGenSettings.LANGUAGE_CS.equals(language)) 
+			return getPlainJNITypeNameForCS();
+		else 
+			throw new RuntimeException("Language not supported");
+	}
+
+	private String getPlainJNITypeNameForCPP() {
 		if ( primitive == true )
 			if ( getClassName().equals( "void" ) == true )
 				return "void";
@@ -791,8 +895,8 @@ public class ClassNode
 
 		if ( isArray() == true )
 			if ( componentType.getFullyQualifiedClassName().equals( "java.lang.String" ) == true ||
-			componentType.getFullyQualifiedClassName().equals( "java.lang.Class" ) == true ||
-			arrayDims > 1 )
+				 componentType.getFullyQualifiedClassName().equals( "java.lang.Class" ) == true ||
+				 arrayDims > 1 )
 				return "jobjectArray";
 			else
 				return componentType.getPlainJNITypeName() + "Array";
@@ -805,7 +909,36 @@ public class ClassNode
 
 		return "jobject";
 	}
+	
+	private String getPlainJNITypeNameForCS() {
+		if ( primitive == true )
+			if ( getClassName().equals( "void" ) )
+				return "void";
+			else {
+				if ( getClassName().equals( "boolean" ) )
+					return "bool";
+				else
+					return className;
+				
+			}
 
+		if ( isArray() == true )
+			if ( componentType.getFullyQualifiedClassName().equals( "java.lang.String" ) == true ||
+			componentType.getFullyQualifiedClassName().equals( "java.lang.Class" ) == true ||
+			arrayDims > 1 )
+				return "jobjectArray";
+			else
+				return componentType.getPlainJNITypeName() + "[]";
+
+		if ( getFullyQualifiedClassName().equals( "java.lang.String" ) == true )
+			return "string";
+
+		if ( getFullyQualifiedClassName().equals( "java.lang.Class" ) == true )
+			return "IntPtr";
+
+		return "IntPtr";
+	}
+	
 	protected HashSet getCPPMethodNames()
 	{
 		return cppMethodNames;

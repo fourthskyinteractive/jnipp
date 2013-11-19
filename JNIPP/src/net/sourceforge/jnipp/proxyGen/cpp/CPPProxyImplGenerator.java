@@ -65,11 +65,11 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		String fullFileName = proxyGenSettings.getProject().getCPPOutputDir() + /*File.separatorChar*/ '/';
 		if ( root.getPackageName().equals( "" ) == true ) {
 			fullFileName = root.getCPPClassName() + ".cpp";
-		
+
 		} else {
 			//fullFileName = root.getPackageName().replace( '.', File.separatorChar ) + File.separatorChar + root.getCPPClassName() + ".cpp";
 			fullFileName = root.getPackageName().replace( '.', '_' ) + '_' + root.getCPPClassName() + ".cpp";
-			
+
 		}
 
 		FormattedFileWriter writer = new FormattedFileWriter( fullFileName, true );
@@ -98,7 +98,6 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		writer.outputLine( "}" );
 		writer.newLine( 1 );
 
-		writer.outputLine("/*");
 		writer.outputLine( root.getCPPClassName() + "::" + root.getCPPClassName() + "(void* unused)" );
 		if ( proxyGenSettings.getUseInheritance() == true )
 		{
@@ -127,7 +126,6 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		}
 		writer.outputLine( "{" );
 		writer.outputLine( "}" );
-		writer.outputLine("*/");
 		writer.newLine( 1 );
 
 		writer.outputLine( "jobject " + root.getCPPClassName() + "::_getPeerObject() const" );
@@ -244,7 +242,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 					if ( headerFile.equals( "" ) == false ) {
 						//headerFile += /*File.separatorChar*/ '/';
 						headerFile += '_';
-						
+
 					}
 					headerFile += cn.getCPPClassName() + ".h";
 					writer.outputLine( "#include \"" + headerFile + "\"" );
@@ -304,7 +302,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 			throws java.io.IOException
 			{
 		writer.outputLine( "// constructors" );
-		
+
 		// Constructor from jobject pointer
 		writer.outputLine( root.getCPPClassName() + "::" + root.getCPPClassName() + "(jobject obj)" );
 		if ( proxyGenSettings.getUseInheritance() == true )
@@ -338,7 +336,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		writer.decTabLevel();
 		writer.outputLine( "}" );
 		writer.newLine( 1 );
-		
+
 		// Iterate thought declared java constructors		
 		Iterator it = root.getConstructors();
 		while ( it.hasNext() )
@@ -353,15 +351,15 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 				if ( proxyGenSettings.getUseRichTypes() == true )
 				{
 					if ( currentParam.getFullyQualifiedClassName().equals( root.getFullyQualifiedClassName() ) == true && 
-						 count == 0 && 
-						 params.hasNext() == false )
+							count == 0 && 
+							params.hasNext() == false )
 						writer.output( currentParam.getJNITypeName( proxyGenSettings.getProject().getUsePartialSpec() ) + "& p" + currentIndex++ );
 					else
 						writer.output( currentParam.getJNITypeName( proxyGenSettings.getProject().getUsePartialSpec() ) + " p" + currentIndex++ );
 				}
 				else
 					writer.output( currentParam.getPlainJNITypeName() + " p" + currentIndex++ );
-				
+
 				if ( params.hasNext() == true )
 					writer.output( ", " );
 			}
@@ -403,10 +401,10 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 				ClassNode currentParam = (ClassNode) params.next();
 				if ( proxyGenSettings.getUseRichTypes() == true && currentParam.isPrimitive() == false ) {
 					writer.output( ", static_cast<" + currentParam.getPlainJNITypeName() + ">( p" + currentIndex++ + " )" );
-					
+
 				} else {
 					writer.output( ", p" + currentIndex++ );
-					
+
 				}
 			}
 			writer.outputLine( " ) );" );
@@ -414,7 +412,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 			writer.outputLine( "}" );
 			writer.newLine( 1 );
 		}
-	}
+			}
 
 	/**
 	 * Private helper method to generate the attribute "getters" for the generated
@@ -573,9 +571,8 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 	 * @exception java.io.IOException
 	 * @see #generate
 	 */
-	public void generateMethods(ClassNode root, FormattedFileWriter writer)
-			throws java.io.IOException
-			{
+	public void generateMethods(ClassNode root, FormattedFileWriter writer) throws java.io.IOException
+	{
 		writer.outputLine( "// methods" );
 		Iterator it = root.getMethods();
 		while ( it.hasNext() == true )
@@ -604,7 +601,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 					writer.output( ", " );
 			}
 			writer.outputLine( ")" );
-			
+
 			// Obtaining method id block
 			{
 				writer.outputLine( "{" );
@@ -619,7 +616,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 				writer.outputLine( "\"" + node.getJNIName() + "\", \"" + node.getJNISignature() + "\" );");
 				writer.decTabLevel();
 			}
-			
+
 			String returnTypeName = null;
 			if ( proxyGenSettings.getUseRichTypes() == true )
 				returnTypeName = node.getReturnType().getJNITypeName( proxyGenSettings.getProject().getUsePartialSpec() );
@@ -662,5 +659,5 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 			writer.outputLine( "}" );
 			writer.newLine( 1 );
 		}
-			}
+	}
 }

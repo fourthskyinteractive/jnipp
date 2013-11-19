@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
+import net.sourceforge.jnipp.project.ProxyGenSettings;
+
 /**
  * Node representing a method of a Java interface or class.
  *
@@ -23,11 +25,11 @@ public class MethodNode
 	private ClassNode returnType = null;
 	private boolean ctor = false;
 	private String jniMethodCall = "";
+	private String jniSignature = null;
 	private boolean staticMethod = false;
 	private ClassNode parent = null;
 
-	public MethodNode(ClassNode parent, Constructor ctor)
-		throws ClassNotFoundException
+	public MethodNode(ClassNode parent, Constructor ctor) throws ClassNotFoundException
 	{
 		this.parent = parent;
 		this.ctor = true;
@@ -40,8 +42,7 @@ public class MethodNode
 			parameterList.add( ClassNode.getClassNode( parameterTypes[i].getName() ) );
 	}
 
-	public MethodNode(ClassNode parent, Method method)
-		throws ClassNotFoundException
+	public MethodNode(ClassNode parent, Method method) throws ClassNotFoundException
 	{
 		this.parent = parent;
 		methodName = method.getName();
@@ -61,6 +62,11 @@ public class MethodNode
 	public String getCPPName()
 	{
 		return Util.getCPPIdentifier( methodName );
+	}
+	
+	public String getCSName()
+	{
+		return Util.getCSIdentifier( methodName );
 	}
 
 	/**
@@ -95,12 +101,19 @@ public class MethodNode
 
 	public String getJNISignature()
 	{
-		String jniSignature = "(";
-		Iterator it = parameterList.iterator();
-		while ( it.hasNext() == true )
-			jniSignature += ((ClassNode) it.next()).getJNIString();
-		jniSignature += ")" + (returnType == null ? "V" : returnType.getJNIString() );
+		if (jniSignature == null) {
+			jniSignature = "(";
+			Iterator it = parameterList.iterator();
+			while ( it.hasNext() == true )
+				jniSignature += ((ClassNode) it.next()).getJNIString();
+			jniSignature += ")" + (returnType == null ? "V" : returnType.getJNIString() );
+		}
+		
 		return jniSignature;
+	}
+	
+	public int getParameterCount() {
+		return parameterList.size();
 	}
 
 	public Iterator getParameterList()
@@ -111,9 +124,28 @@ public class MethodNode
 	public ClassNode getReturnType()
 	{
 		return returnType;
+	}	
+	
+	public ClassNode getParent() 
+	{
+		return parent;
 	}
-
+	
 	public String getJNIMethodCall()
+	{
+		return getJNIMethodCall(ProxyGenSettings.LANGUAGE_CPP);
+	}
+	
+	public String getJNIMethodCall(String language) {
+		if (ProxyGenSettings.LANGUAGE_CPP.equals(language))
+			return getJNIMethodCallForCPP();
+		else if (ProxyGenSettings.LANGUAGE_CS.equals(language))
+			return getJNIMethodCallForCS();
+		else
+			throw new RuntimeException("language not supported");
+	}
+	
+	private String getJNIMethodCallForCPP()
 	{
 		String jniMethodCall = "";
 		if ( returnType == null || returnType.getClassName().equals( "void" ) == true )
@@ -138,6 +170,35 @@ public class MethodNode
 		return jniMethodCall;
 	}
 
+	private String getJNIMethodCallForCS()
+	{
+		String jniMethodCall = "";
+		if ( returnType == null || returnType.getClassName().equals( "void" ) == true )
+		{
+			jniMethodCall = "AndroidJNI.Call";
+			jniMethodCall += (staticMethod == true ? "StaticVoidMethod(" : "VoidMethod(");
+		}
+		else if ( returnType.getFullyQualifiedClassName().equals( "java.lang.String" ) ) 
+		{
+			jniMethodCall = "AndroidJNI.Call";
+			jniMethodCall += (staticMethod == true ? "StaticStringMethod(" : "StringMethod(");
+		}
+		else if ( returnType.isPrimitive() == false )
+		{
+			jniMethodCall = "AndroidJNI.Call";
+			jniMethodCall += (staticMethod == true ? "StaticObjectMethod(" : "ObjectMethod(");
+		}
+		else
+		{
+			jniMethodCall = "AndroidJNI.Call";
+			if ( staticMethod == true )
+				jniMethodCall += "Static";
+			jniMethodCall += Character.toUpperCase( returnType.getClassName().charAt( 0 ) ) + returnType.getClassName().substring( 1 );
+			jniMethodCall += "Method(";
+		}
+		return jniMethodCall;
+	}
+	
 	public boolean isStatic()
 	{
 		return staticMethod;
@@ -158,4 +219,6 @@ public class MethodNode
 		signature += ");";
 		return signature;
 	}
+	
+	
 }
