@@ -64,11 +64,10 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 
 		String fullFileName = proxyGenSettings.getProject().getCPPOutputDir() + /*File.separatorChar*/ '/';
 		if ( root.getPackageName().equals( "" ) == true ) {
-			fullFileName = root.getCPPClassName() + ".cpp";
+			fullFileName = getClassName(root) + ".cpp";
 
 		} else {
-			//fullFileName = root.getPackageName().replace( '.', File.separatorChar ) + File.separatorChar + root.getCPPClassName() + ".cpp";
-			fullFileName = root.getPackageName().replace( '.', '_' ) + '_' + root.getCPPClassName() + ".cpp";
+			fullFileName = root.getPackageName().replace( '.', '_' ) + '_' + getClassName(root) + ".cpp";
 
 		}
 
@@ -77,15 +76,15 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		generateIncludes( root, writer );
 		generateUsing( root, writer );
 
-		writer.output( "std::string " + root.getCPPClassName() + "::className = \"" );
+		writer.output( "std::string " + getClassName(root) + "::className = \"" );
 
 		if ( root.getPackageName().equals( "" ) == false )
 			writer.output( root.getPackageName().replace( '.', '/' ) + "/" );
 		writer.outputLine( root.getClassName() + "\";" );
-		writer.outputLine( "jclass " + root.getCPPClassName() + "::objectClass = NULL;" );
+		writer.outputLine( "jclass " + getClassName(root) + "::objectClass = NULL;" );
 		writer.newLine( 1 );
 
-		writer.outputLine( "jclass " + root.getCPPClassName() + "::_getObjectClass()" );
+		writer.outputLine( "jclass " + getClassName(root) + "::_getObjectClass()" );
 		writer.outputLine( "{" );
 		writer.incTabLevel();
 		writer.outputLine( "if ( objectClass == NULL )" );
@@ -98,7 +97,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		writer.outputLine( "}" );
 		writer.newLine( 1 );
 
-		writer.outputLine( root.getCPPClassName() + "::" + root.getCPPClassName() + "(void* unused)" );
+		writer.outputLine( getClassName(root) + "::" + getClassName(root) + "(void* unused)" );
 		if ( proxyGenSettings.getUseInheritance() == true )
 		{
 			if ( root.isInterface() == false )
@@ -106,7 +105,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 				if ( root.getSuperClass() != null )
 				{
 					writer.incTabLevel();
-					writer.output( ": " + root.getSuperClass().getFullyQualifiedCPPClassName() + "( unused )" );
+					writer.output( ": " + getFullyQualifiedClassName(root.getSuperClass()) + "( unused )" );
 					writer.decTabLevel();
 				}
 			}
@@ -116,9 +115,9 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 				if ( intfcs.hasNext() == true )
 				{
 					writer.incTabLevel();
-					writer.output( ": " + ((ClassNode) intfcs.next()).getFullyQualifiedCPPClassName() + "( unused )" );
+					writer.output( " : " + getFullyQualifiedClassName((ClassNode) intfcs.next()));
 					while ( intfcs.hasNext() == true )
-						writer.output( ", " + ((ClassNode) intfcs.next()).getFullyQualifiedCPPClassName() + "( unused )" );
+						writer.output( ", " + getFullyQualifiedClassName((ClassNode) intfcs.next()) );
 					writer.decTabLevel();
 				}
 			}
@@ -128,7 +127,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		writer.outputLine( "}" );
 		writer.newLine( 1 );
 
-		writer.outputLine( "jobject " + root.getCPPClassName() + "::_getPeerObject() const" );
+		writer.outputLine( "jobject " + getClassName(root) + "::_getPeerObject() const" );
 		writer.outputLine( "{" );
 		writer.incTabLevel();
 		writer.outputLine( "return peerObject;" );
@@ -136,7 +135,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		writer.outputLine( "}" );
 		writer.newLine( 1 );
 
-		writer.outputLine( "jclass " + root.getCPPClassName() + "::getObjectClass()" );
+		writer.outputLine( "jclass " + getClassName(root) + "::getObjectClass()" );
 		writer.outputLine( "{" );
 		writer.incTabLevel();
 		writer.outputLine( "return _getObjectClass();" );
@@ -144,7 +143,7 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 		writer.outputLine( "}" );
 		writer.newLine( 1 );
 
-		writer.outputLine( root.getCPPClassName() + "::operator jobject()" );
+		writer.outputLine( getClassName(root) + "::operator jobject()" );
 		writer.outputLine( "{" );
 		writer.incTabLevel();
 		writer.outputLine( "return _getPeerObject();" );
@@ -659,5 +658,100 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 			writer.outputLine( "}" );
 			writer.newLine( 1 );
 		}
+	}
+
+	public String getClassName(ClassNode root) {
+		String cppName = Util.getCPPIdentifier( root.getClassName() );
+		return cppName.replace( '$', '_' );
+	}
+
+	public String getFullyQualifiedClassName(ClassNode root) {
+		if ( root.getNamespace().equals( "" ) == true )
+			return getClassName(root);
+
+		return root.getNamespace() + "::" + getClassName(root);
+	}
+
+	public String getJNITypeName(ClassNode root, boolean usePartialSpec) {
+		if ( root.needsProxy() == true )
+			return "::" + root.getNamespace() + "::" + getClassName(root);
+
+		if ( root.getFullyQualifiedClassName().equals( "java.lang.String" ) == true ) 
+		{
+			return "::net::sourceforge::jnipp::JStringHelper";
+		}
+
+		// TODO handle array of objects
+		if ( root.isArray() == true && root.getComponentType().isPrimitive() == true )
+			return "::net::sourceforge::jnipp::J" + 
+					Character.toUpperCase( root.getComponentType().getClassName().charAt( 0 ) ) + 
+					root.getComponentType().getClassName().substring( 1 ) + 
+					"ArrayHelper<" + root.getArrayDims() + ">";
+
+		if ( root.isArray() == true && root.getComponentType().needsProxy() == true )
+			if ( usePartialSpec == true )
+				return "::net::sourceforge::jnipp::ProxyArray< " + getJNITypeName( root.getComponentType(), usePartialSpec ) + ", " + root.getArrayDims() + " >";
+			else
+				return "::net::sourceforge::jnipp::PA<" + getJNITypeName( root.getComponentType(), usePartialSpec ) + ">::ProxyArray<" + root.getArrayDims() + ">";
+
+		if ( root.isArray() == true && root.getComponentType().getFullyQualifiedClassName().equals( "java.lang.String" ) == true )
+			return "::net::sourceforge::jnipp::JStringHelperArray<" + root.getArrayDims() + ">";
+
+		return getPlainJNITypeName(root);
+	}
+
+	public String getPlainJNITypeName(ClassNode root) {
+		if ( root.isPrimitive() )
+			if ( root.getClassName().equals( "void" ) == true )
+				return "void";
+			else
+				return "j" + root.getClassName();
+
+		if ( root.isArray() == true )
+			if ( root.getComponentType().getFullyQualifiedClassName().equals( "java.lang.String" ) == true ||
+				 root.getComponentType().getFullyQualifiedClassName().equals( "java.lang.Class" ) == true ||
+				 root.getArrayDims() > 1 )
+				return "jobjectArray";
+			else
+				return root.getComponentType().getPlainJNITypeName() + "Array";
+
+		if ( root.getFullyQualifiedClassName().equals( "java.lang.String" ) == true )
+			return "jstring";
+
+		if ( root.getFullyQualifiedClassName().equals( "java.lang.Class" ) == true )
+			return "jclass";
+
+		return "jobject";
+	}
+
+	public String getJNIMethodCall(MethodNode node) {
+		String jniMethodCall = "";
+		ClassNode returnType = node.getReturnType();
+		boolean staticMethod = node.isStatic();
+		
+		if ( returnType == null || returnType.getClassName().equals( "void" ) == true )
+		{
+			jniMethodCall = "JNIEnvHelper::Call";
+			jniMethodCall += (staticMethod == true ? "StaticVoidMethod(" : "VoidMethod(");
+		}
+		else
+		if ( returnType.isPrimitive() == false )
+		{
+			jniMethodCall = "JNIEnvHelper::Call";
+			jniMethodCall += (staticMethod == true ? "StaticObjectMethod(" : "ObjectMethod(");
+		}
+		else
+		{
+			jniMethodCall = "JNIEnvHelper::Call";
+			if ( staticMethod == true )
+				jniMethodCall += "Static";
+			jniMethodCall += Character.toUpperCase( returnType.getClassName().charAt( 0 ) ) + returnType.getClassName().substring( 1 );
+			jniMethodCall += "Method(";
+		}
+		return jniMethodCall;
+	}
+
+	public String getMethodName(MethodNode node) {
+		return Util.getCPPIdentifier( node.getName() );
 	}
 }
