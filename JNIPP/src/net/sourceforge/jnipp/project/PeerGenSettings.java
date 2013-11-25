@@ -5,8 +5,10 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.w3c.dom.NodeList;
 
 /**
@@ -24,6 +26,9 @@ import org.w3c.dom.NodeList;
 
 public class PeerGenSettings 
 {
+	public static final String LANGUAGE_CPP = "cpp";
+	public static final String LANGUAGE_CS = "cs";
+	
 	/**
 	 * Generate code destrucively?
 	 */
@@ -38,6 +43,11 @@ public class PeerGenSettings
 	 * Generate proxy and helper classes as parameters, return and attribute types?
 	 */
 	private boolean useRichTypes = false;
+	
+	/**
+	 * Language for peer creation
+	 */
+	private String language = LANGUAGE_CPP;
 	
 	/**
 	 * The proxy generator settings for use if "useRichTypes" is set.
@@ -107,6 +117,8 @@ public class PeerGenSettings
 			useInheritance = Boolean.valueOf( elementNode.getAttribute( "useInheritance" ) ).booleanValue();
 		if ( elementNode.hasAttribute( "useRichTypes" ) == true )
 			useRichTypes = Boolean.valueOf( elementNode.getAttribute( "useRichTypes" ) ).booleanValue();
+		if ( elementNode.hasAttribute( "language" ) == true )
+			language = elementNode.getAttribute( "language" );
 			
 		NodeList childNodes = elementNode.getChildNodes();
 		for ( int i = 0; i < childNodes.getLength(); ++i )
@@ -223,6 +235,14 @@ public class PeerGenSettings
 	public void setUseRichTypes(boolean useRichTypes)
 	{
 		this.useRichTypes = useRichTypes;
+	}
+	
+	public String getLanguage() {
+		return language;
+	}
+	
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 	
 	/**

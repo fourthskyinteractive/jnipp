@@ -15,6 +15,7 @@
 		<tstamp/>
 	</target>
 
+	<!--
 	<target name="compile" depends="prepare">
 		<javac srcdir="${src.dir}"
 				 destdir="${intermediate.dir}"
@@ -23,8 +24,8 @@
 			<include name="tutorial/NetAdapterServices.java"/>
 		</javac>
 	</target>
-
-	<target name="generate" depends="compile">
+	-->
+	<target name="generate" depends="prepare">
 		<java className="net.sourceforge.jnipp.main.Main" fork="yes" dir="${src.dir}/tutorial">
 			<arg line="-projectFile project.xml"/>
 			<classpath>

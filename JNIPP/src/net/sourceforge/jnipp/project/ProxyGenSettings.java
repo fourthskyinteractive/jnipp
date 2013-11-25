@@ -1,13 +1,15 @@
 package net.sourceforge.jnipp.project;
 
-import org.w3c.dom.Node;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -66,7 +68,9 @@ public class ProxyGenSettings
 	 */
 	private Project project = null;
 	
-	private ArrayList classNames = new ArrayList();
+	private List classNames = new ArrayList();
+	
+	private Set peerClassNames = new HashSet();
 	
 	/**
 	 * Public class constructor.
@@ -158,7 +162,15 @@ public class ProxyGenSettings
 						Element inputClassElement = (Element) inputClassNodes.item( j );
 						if ( inputClassElement.hasAttribute( "name" ) == false )
 							throw new ProjectFormatException( "attribute \"name\" required for element \"input-class\"" );
+						
 						classNames.add( inputClassElement.getAttribute( "name" ) );
+						
+						if (inputClassElement.hasAttribute( "as-peer" )) {
+							boolean asPeer = Boolean.valueOf( inputClassElement.getAttribute( "as-peer" ) ).booleanValue();
+							if (asPeer)
+								peerClassNames.add(inputClassElement.getAttribute( "name" ));
+							
+						}
 					}
 					else
 						throw new ProjectFormatException( "unrecognized element: " + inputClassNodes.item( j ).getNodeName() );
@@ -297,6 +309,10 @@ public class ProxyGenSettings
 	
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+	
+	public boolean isGenerateAsPeer( String object ) {
+		return peerClassNames.contains(object);
 	}
 	
 	/**

@@ -599,7 +599,6 @@ public class ClassNode
 		}
 		
 		// if not found, search in method from interfaces
-		/*
 		Iterator itIntf = interfaceList.iterator();
 		while (itIntf.hasNext()) {
 			ClassNode iface = (ClassNode) itIntf.next();
@@ -607,7 +606,7 @@ public class ClassNode
 			if (iface.isImplemented(method))
 				return true;
 		}
-		*/
+		
 		return false;
 	}
 

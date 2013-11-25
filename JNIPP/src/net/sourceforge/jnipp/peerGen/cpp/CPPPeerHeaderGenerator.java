@@ -1,4 +1,4 @@
-package net.sourceforge.jnipp.peerGen;
+package net.sourceforge.jnipp.peerGen.cpp;
 
 import java.util.*;
 import net.sourceforge.jnipp.common.*;

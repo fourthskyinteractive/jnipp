@@ -3,9 +3,170 @@
 <project name="simple" targetType="exe" targetName="simpleDemo" >
 	<proxygen useRichTypes="true" useInheritance="true" recursionLevel="1" language="cs">
 		<input-classes>
-			<!--<input-class name="demo.chapters.san.simple.SimpleDemo"/>-->
 			<input-class name="java.lang.Object"/>
-			<!--<input-class name="java.lang.Integer"/>-->
+			<input-class name="java.lang.String"/>
+			
+			<input-class name="java.net.InetSocketAddress"/>
+			<input-class name="java.net.Socket"/>
+			<input-class name="java.net.ServerSocket"/>
+			<input-class name="java.net.DatagramSocket"/>
+			<input-class name="java.net.MulticastSocket"/>
+			
+			<input-class name="android.app.Activity"/>
+			<input-class name="android.app.NotificationManager"/>
+			<input-class name="android.app.Notification$Builder"/>
+			<input-class name="android.app.PendingIntent"/>
+			<input-class name="android.app.Presentation"/>
+			
+			<input-class name="android.bluetooth.BluetoothManager"/>
+			<input-class name="android.bluetooth.BluetoothAdapter"/>
+			<input-class name="android.bluetooth.BluetoothA2dp"/>
+			<input-class name="android.bluetooth.BluetoothHeadset"/>
+			<input-class name="android.bluetooth.BluetoothHealth"/>
+			
+			<input-class name="android.content.Intent"/>
+			<input-class name="android.content.IntentFilter"/>
+			<input-class name="android.content.IntentSender"/>
+			
+			<input-class name="android.database.DatabaseUtils"/>
+			<input-class name="android.database.DatabaseErrorHandler"/>
+			<input-class name="android.database.MergeCursor"/>
+			<input-class name="android.database.MatrixCursor"/>
+			
+			<input-class name="android.database.sqlite.SQLiteDatabase"/>
+			<input-class name="android.database.sqlite.SQLiteCursor"/>
+			<input-class name="android.database.sqlite.SQLiteProgram"/>
+			<input-class name="android.database.sqlite.SQLiteQueryBuilder"/>
+			<input-class name="android.database.sqlite.SQLiteOpenHelper"/>
+			
+			<input-class name="android.graphics.SurfaceTexture"/>
+			
+			<input-class name="android.media.AudioRecord"/>
+			<input-class name="android.media.AudioManager"/>
+			<input-class name="android.media.MediaCodec"/>
+			<input-class name="android.media.MediaCrypto"/>
+			<input-class name="android.media.MediaDrm"/>
+			<input-class name="android.media.MediaMuxer"/>
+			<input-class name="android.media.MediaPlayer"/>
+			<input-class name="android.media.MediaRecorder"/>
+			<input-class name="android.media.MediaRouter"/>
+			
+			<input-class name="android.nfc.NfcManager"/>
+			<input-class name="android.nfc.NfcAdapter"/>
+			
+			<input-class name="android.net.rtp.AudioCodec"/>
+			<input-class name="android.net.rtp.AudioGroup"/>
+			<input-class name="android.net.rtp.AudioStream"/>
+			<input-class name="android.net.rtp.AudioStream"/>
+			
+			<input-class name="android.net.nsd.NsdManager"/>
+			<input-class name="android.net.nsd.NsdServiceInfo"/>
+			
+			<input-class name="android.net.wifi.ScanResult"/>
+			<input-class name="android.net.wifi.WifiManager"/>
+			
+			<input-class name="android.net.wifi.p2p.WifiP2pManager"/>
+			<input-class name="android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo"/>
+			<input-class name="android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest"/>
+			<input-class name="android.net.wifi.p2p.nsd.WifiP2pUpnpServiceInfo"/>
+			<input-class name="android.net.wifi.p2p.nsd.WifiP2pUpnpServiceRequest"/>
+			
+			<input-class name="android.opengl.EGL14"/>
+			<input-class name="android.opengl.GLES10"/>
+			<input-class name="android.opengl.GLES20"/>
+			<input-class name="android.opengl.GLES30"/>
+			<input-class name="android.opengl.GLSurfaceView"/>
+			<input-class name="android.opengl.GLU"/>
+			<input-class name="android.opengl.GLUtils"/>
+			
+			<input-class name="android.renderscript.RenderScript"/>	
+			<input-class name="android.renderscript.ScriptC"/>	
+			<input-class name="android.renderscript.ScriptIntrinsic"/>
+			<input-class name="android.renderscript.ScriptIntrinsicBlur"/>
+			<input-class name="android.renderscript.ScriptIntrinsicColorMatrix"/>
+			<input-class name="android.renderscript.ScriptIntrinsicConvolve3x3"/>
+			<input-class name="android.renderscript.ScriptIntrinsicConvolve5x5"/>
+			<input-class name="android.renderscript.ScriptIntrinsicHistogram"/>
+			<input-class name="android.renderscript.ScriptIntrinsicLUT"/>
+			<input-class name="android.renderscript.ScriptIntrinsicYuvToRGB"/>
+			
+			<input-class name="android.speech.SpeechRecognizer"/>
+			<input-class name="android.speech.RecognizerIntent"/>
+			<input-class name="android.speech.RecognizerResultsIntent"/>
+			
+			<input-class name="android.speech.tts.TextToSpeech"/>
+			<input-class name="android.speech.tts.SynthesisRequest"/>
+			
+			<input-class name="android.view.Surface"/>
+			
+			<input-class name="java.lang.Runnable" as-peer="true"/>
+			
+			<input-class name="android.app.PendingIntent$OnFinished" as-peer="true"/>
+			
+			<input-class name="android.os.Handler$Callback" as-peer="true"/>
+			
+			<input-class name="android.bluetooth.BluetoothAdapter$LeScanCallback" as-peer="true"/>
+			<input-class name="android.bluetooth.BluetoothProfile$ServiceListener" as-peer="true"/>
+			<input-class name="android.bluetooth.BluetoothGattServerCallback" as-peer="true"/>
+			<input-class name="android.bluetooth.BluetoothGattCallback" as-peer="true"/>
+			
+			<input-class name="android.content.IntentSender$OnFinished" as-peer="true"/>
+			
+			<input-class name="android.database.sqlite.SQLiteTransactionListener" as-peer="true"/>
+
+			<input-class name="android.graphics.SurfaceTexture$OnFrameAvailableListener" as-peer="true"/>
+
+			<input-class name="android.media.AudioManager$OnAudioFocusChangeListener" as-peer="true"/>
+			<input-class name="android.media.AudioRecord$OnRecordPositionUpdateListener" as-peer="true"/>
+			<input-class name="android.media.ImageReader$OnImageAvailableListener" as-peer="true"/>
+			<input-class name="android.media.MediaRecorder$OnErrorListener" as-peer="true"/>
+			<input-class name="android.media.MediaRecorder$OnInfoListener" as-peer="true"/>
+			<input-class name="android.media.MediaPlayer$OnCompletionListener" as-peer="true"/>
+			<input-class name="android.media.MediaPlayer$OnBufferingUpdateListener" as-peer="true"/>
+			<input-class name="android.media.MediaPlayer$OnErrorListener" as-peer="true"/>
+			<input-class name="android.media.MediaPlayer$OnInfoListener" as-peer="true"/>
+			<input-class name="android.media.MediaPlayer$OnPreparedListener" as-peer="true"/>
+			<input-class name="android.media.MediaPlayer$OnSeekCompleteListener" as-peer="true"/>
+			<input-class name="android.media.MediaPlayer$OnTimedTextListener" as-peer="true"/>
+			<input-class name="android.media.MediaPlayer$OnVideoSizeChangedListener" as-peer="true"/>
+			
+			<input-class name="android.media.MediaRouter$Callback" as-peer="true"/>
+			<input-class name="android.media.MediaRouter$SimpleCallback" as-peer="true"/>
+			<input-class name="android.media.MediaRouter$VolumeCallback" as-peer="true"/>
+			
+			<input-class name="android.net.nsd.NsdManager$DiscoveryListener" as-peer="true"/>
+			<input-class name="android.net.nsd.NsdManager$RegistrationListener" as-peer="true"/>
+			<input-class name="android.net.nsd.NsdManager$ResolveListener" as-peer="true"/>
+			
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$ActionListener" as-peer="true"/>
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$ChannelListener" as-peer="true"/>
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$ConnectionInfoListener" as-peer="true"/>
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$DnsSdServiceResponseListener" as-peer="true"/>
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$DnsSdTxtRecordListener" as-peer="true"/>
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$GroupInfoListener" as-peer="true"/>
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$PeerListListener" as-peer="true"/>
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$ServiceResponseListener" as-peer="true"/>
+			<input-class name="android.net.wifi.p2p.WifiP2pManager$UpnpServiceResponseListener" as-peer="true"/>
+			
+			<input-class name="android.opengl.GLSurfaceView$EGLConfigChooser" as-peer="true"/>
+			<input-class name="android.opengl.GLSurfaceView$EGLContextFactory" as-peer="true"/>
+			<input-class name="android.opengl.GLSurfaceView$EGLWindowSurfaceFactory" as-peer="true"/>
+			
+			<input-class name="android.renderscript.Allocation$OnBufferAvailableListener" as-peer="true"/>
+			<input-class name="android.renderscript.RenderScript$RSErrorHandler" as-peer="true"/>
+			<input-class name="android.renderscript.RenderScript$RSMessageHandler" as-peer="true"/>
+			
+			<input-class name="android.speech.RecognitionListener" as-peer="true"/>
+			<input-class name="android.speech.RecognitionService$Callback" as-peer="true"/>
+			
+			<input-class name="android.speech.tts.SynthesisCallback" as-peer="true"/>
+			<input-class name="android.speech.tts.TextToSpeech$OnInitListener" as-peer="true"/>
+			<input-class name="android.speech.tts.TextToSpeech$OnUtteranceCompletedListener" as-peer="true"/>
+			<input-class name="android.speech.tts.UtteranceProgressListener" as-peer="true"/>
+			
+			<input-class name="android.view.SurfaceHolder$Callback" as-peer="true"/>
+			<input-class name="android.view.SurfaceHolder$Callback2" as-peer="true"/>
+			
 		</input-classes>
 	</proxygen>
 	<nmakefile name="simple.mak"/>

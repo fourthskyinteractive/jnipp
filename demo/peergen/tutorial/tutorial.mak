@@ -18,7 +18,7 @@ NULL=nul
 !ENDIF
 
 TARGETTYPE=DLL
-SOURCES= .\demo\peergen\tutorial\NetAdapterServicesPeer.cpp .\demo\peergen\tutorial\NetAdapterServicesMapping.cpp .\java\lang\RunnablePeer.cpp .\java\lang\RunnableMapping.cpp
+SOURCES= .\RunnablePeer.cs
 
 OBJS=$(SOURCES:.cpp=.obj)
 
@@ -44,7 +44,6 @@ OUTDIR=Debug
 LINKFLAGS=$(LINKFLAGS) /debug
 LINKOBJS=$(OBJS:.obj=_d.obj)
 LINKLIBS=libJNIPPCore_d.lib
-LINKLIBS=$(LINKLIBS) netapi32.lib
 
 TARGETNAME=PeerTutorial_d
 
@@ -61,7 +60,6 @@ CPPFLAGS=$(CPPFLAGS) /MD /O2 /D "NDEBUG"
 OUTDIR=Release
 LINKOBJS=$(OBJS)
 LINKLIBS=libJNIPPCore.lib
-LINKLIBS=$(LINKLIBS) netapi32.lib
 
 TARGETNAME=PeerTutorial
 

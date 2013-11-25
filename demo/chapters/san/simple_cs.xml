@@ -30,6 +30,7 @@
 			<classpath>
 				<pathelement location="${env.JNIPP_HOME}/lib/jnipp.jar"/>
 				<pathelement location="${intermediate.dir}"/>
+				<pathelement location="C:/Evandro/Programming/Android/android-sdk/platforms/android-19/android.jar"/>
 				<!--<pathelement path="${java.class.path}"/>-->
 			</classpath>
 		</java>

@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 
 <project name="tutorial" targetType="shlib" targetName="PeerTutorial">
-	<peergen destructive="false">
+	<peergen destructive="false" language="cs">
 		<input-classes>
-			<input-class name="demo.peergen.tutorial.NetAdapterServices"/>
 			<input-class name="java.lang.Runnable"/>
 		</input-classes>
 	</peergen>

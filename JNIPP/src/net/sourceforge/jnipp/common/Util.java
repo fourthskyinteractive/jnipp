@@ -130,6 +130,7 @@ public class Util
 		csKeywordMap.put( "inline", "_inline" );
 		csKeywordMap.put( "int", "_int" );
 		csKeywordMap.put( "long", "_long" );
+		csKeywordMap.put( "lock", "lock_" );
 		csKeywordMap.put( "mutable", "_mutable" );
 		csKeywordMap.put( "namespace", "_namespace" );
 		csKeywordMap.put( "new", "_new" );
@@ -177,7 +178,7 @@ public class Util
 		csKeywordMap.put( "xor_eq", "_xor_eq" );
 		
 		// others that cause problems
-		csKeywordMap.put( "NULL", "_NULL" );
+		//csKeywordMap.put( "NULL", "null" );
 	}
 	
 	public static String getCSIdentifier(String identifier)
