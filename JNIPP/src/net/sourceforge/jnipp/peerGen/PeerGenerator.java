@@ -6,7 +6,6 @@ import net.sourceforge.jnipp.common.ClassNode;
 import net.sourceforge.jnipp.peerGen.cpp.CPPPeerFactoryHeaderGenerator;
 import net.sourceforge.jnipp.peerGen.cpp.CPPPeerHeaderGenerator;
 import net.sourceforge.jnipp.peerGen.cpp.CPPPeerImplGenerator;
-import net.sourceforge.jnipp.peerGen.unity.CSPeerImplGenerator;
 import net.sourceforge.jnipp.project.Project;
 import net.sourceforge.jnipp.project.PeerGenSettings;
 
@@ -78,9 +77,6 @@ public class PeerGenerator
 	private static JavaProxyGenerator javaProxyGenerator = new JavaProxyGenerator();
 
 	private static CPPPeerFactoryHeaderGenerator peerFactoryHeaderGenerator = new CPPPeerFactoryHeaderGenerator();
-	
-	
-	private static CSPeerImplGenerator csPeerImplGenerator  = new CSPeerImplGenerator();
 
 	/**
 	 * Public entry point.
@@ -101,54 +97,13 @@ public class PeerGenerator
 		if (PeerGenSettings.LANGUAGE_CPP.equals(peerGenSettings.getLanguage()))
 			return generateCPP(peerGenSettings);
 
-		else if (PeerGenSettings.LANGUAGE_CS.equals(peerGenSettings.getLanguage()))
-			return generateCS(peerGenSettings);
+//		else if (PeerGenSettings.LANGUAGE_CS.equals(peerGenSettings.getLanguage()))
+//			return generateCS(peerGenSettings);
 		
 		else 
 			throw new IllegalStateException("language shall be \"cpp\" or \"cs\"");
 	}
 	
-	public static Collection generateCS(PeerGenSettings peerGenSettings) throws ClassNotFoundException, java.io.IOException, ProjectFormatException
-	{
-		ArrayList classList = new ArrayList();
-		Iterator inputClassIterator = peerGenSettings.getClassNames();
-
-		while ( inputClassIterator.hasNext() == true )
-		{
-			ClassNode classNode = ClassNode.getClassNode( (String) inputClassIterator.next() );
-			if ( classNode.isInterface() == false )
-				throw new ProjectFormatException( classNode.getFullyQualifiedClassName() + " is not an interface." );
-
-			classList.add( new DependencyData( null, null, classNode.getCPPClassName() + "Peer.cs" ) );
-			/*
-			classList.add( new DependencyData( classNode.getPackageName().replace( '.', '/' ),
-					classNode.getCPPClassName() + "Mapping.h",
-					classNode.getCPPClassName() + "Mapping.cpp" ) );
-			*/
-			System.out.println( "generating C# Peer Class for " + classNode.getFullyQualifiedClassName() + " ..." );
-			csPeerImplGenerator.generate( classNode, peerGenSettings );
-
-			if ( peerGenSettings.getUseRichTypes() == true )
-			{
-				ProxyGenSettings proxyGenSettings = peerGenSettings.getProxyGenSettings();
-				Iterator deps = classNode.getDependencies();
-				while ( deps.hasNext() == true )
-				{
-					ClassNode next = (ClassNode) deps.next();
-					if ( next.isArray() == true )
-						proxyGenSettings.addClassName( next.getJNIString().replace( '/', '.' ) );
-					else
-						proxyGenSettings.addClassName( next.getFullyQualifiedClassName() );
-				}
-			}
-		}
-
-		if ( peerGenSettings.getUseRichTypes() == true )
-			classList.addAll( ProxyGenerator.generate( peerGenSettings.getProxyGenSettings() ) );
-
-		return classList;
-	}
-
 	public static Collection generateCPP(PeerGenSettings peerGenSettings) throws ClassNotFoundException, java.io.IOException, ProjectFormatException
 	{
 		ArrayList classList = new ArrayList();

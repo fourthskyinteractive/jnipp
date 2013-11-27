@@ -27,6 +27,7 @@ public class MethodNode
 	private String jniMethodCall = "";
 	private String jniSignature = null;
 	private boolean staticMethod = false;
+	private boolean abstractMethod = false;
 	private ClassNode parent = null;
 
 	public MethodNode(ClassNode parent, Constructor ctor) throws ClassNotFoundException
@@ -48,6 +49,7 @@ public class MethodNode
 		methodName = method.getName();
 		jniName = methodName;
 		staticMethod = Modifier.isStatic( method.getModifiers() );
+		abstractMethod = Modifier.isAbstract( method.getModifiers() );
 		returnType = ClassNode.getClassNode( method.getReturnType().getName() );
 		Class[] parameterTypes = method.getParameterTypes();
 		for ( int i = 0; i < parameterTypes.length; ++i )
@@ -204,6 +206,11 @@ public class MethodNode
 		return staticMethod;
 	}
 	
+	public boolean isAbstract() 
+	{
+		return abstractMethod;	
+	}
+	
 	public String getJavaSignature()
 	{
 		String signature = "";
@@ -219,6 +226,5 @@ public class MethodNode
 		signature += ");";
 		return signature;
 	}
-	
 	
 }

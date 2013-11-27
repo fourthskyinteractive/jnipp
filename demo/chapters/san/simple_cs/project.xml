@@ -99,15 +99,19 @@
 			
 			<input-class name="android.view.Surface"/>
 			
+			<!-- Peers -->
+			
 			<input-class name="java.lang.Runnable" as-peer="true"/>
 			
 			<input-class name="android.app.PendingIntent$OnFinished" as-peer="true"/>
+			
+			<input-class name="android.content.BroadcastReceiver" as-peer="true"/>
 			
 			<input-class name="android.os.Handler$Callback" as-peer="true"/>
 			
 			<input-class name="android.bluetooth.BluetoothAdapter$LeScanCallback" as-peer="true"/>
 			<input-class name="android.bluetooth.BluetoothProfile$ServiceListener" as-peer="true"/>
-			<input-class name="android.bluetooth.BluetoothGattServerCallback" as-peer="true"/>
+			<input-class name="android.bluetooth.BluetoothGattServerCallback" as-peer="true"/> <!-- abstract class -->
 			<input-class name="android.bluetooth.BluetoothGattCallback" as-peer="true"/>
 			
 			<input-class name="android.content.IntentSender$OnFinished" as-peer="true"/>
@@ -130,9 +134,9 @@
 			<input-class name="android.media.MediaPlayer$OnTimedTextListener" as-peer="true"/>
 			<input-class name="android.media.MediaPlayer$OnVideoSizeChangedListener" as-peer="true"/>
 			
-			<input-class name="android.media.MediaRouter$Callback" as-peer="true"/>
-			<input-class name="android.media.MediaRouter$SimpleCallback" as-peer="true"/>
-			<input-class name="android.media.MediaRouter$VolumeCallback" as-peer="true"/>
+			<input-class name="android.media.MediaRouter$Callback" as-peer="true"/> <!-- abstract class -->
+			<input-class name="android.media.MediaRouter$SimpleCallback" as-peer="true"/> <!-- abstract class -->
+			<input-class name="android.media.MediaRouter$VolumeCallback" as-peer="true"/> <!-- abstract class -->
 			
 			<input-class name="android.net.nsd.NsdManager$DiscoveryListener" as-peer="true"/>
 			<input-class name="android.net.nsd.NsdManager$RegistrationListener" as-peer="true"/>

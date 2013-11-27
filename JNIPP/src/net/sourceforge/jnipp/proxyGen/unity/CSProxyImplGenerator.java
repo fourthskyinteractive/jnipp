@@ -80,31 +80,12 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 	}
 	
 	public void generatePeer(ClassNode root, ProxyGenSettings proxyGenSettings, FormattedFileWriter writer) throws IOException {
+		// Class definition
 		writer.output( "public abstract class " + getClassName(root) );
-		/*
-		if ( proxyGenSettings.getUseInheritance() == true )
-		{
-			if ( root.isInterface() == false )
-			{
-				if ( root.getSuperClass() != null )
-					writer.output( " : " + getFullyQualifiedClassName(root.getSuperClass()) );
-				
-			}
-			else
-			{
-				Iterator intfcs = root.getInterfaces();
-				if ( intfcs.hasNext() == true )
-				{
-					writer.output( " : " + getFullyQualifiedClassName((ClassNode) intfcs.next()));
-					while ( intfcs.hasNext() == true )
-						writer.output( ", " + getFullyQualifiedClassName((ClassNode) intfcs.next()) );
-				}
-				else
-					writer.output(" : java.lang.Object");
-			}
-		}
-		*/
-		writer.output(" : AndroidJavaProxy");
+		if (root.isInterface())
+			writer.output(" : AndroidJavaProxy");
+		else
+			writer.output(" : AndroidJavaAbstractProxy");
 		
 		writer.outputLine( "" );
 		writer.outputLine( "{" );
@@ -114,10 +95,7 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 		writer.outputLine("private static readonly string className = \"" +
 							root.getFullyQualifiedClassName().replace('.', '/') + 
 							"\";");
-//		if (isNotObjectClass)
-//			writer.outputLine("public static new string ClassName {");
-//		else
-			writer.outputLine("public static string ClassName {");
+		writer.outputLine("public static string ClassName {");
 		writer.incTabLevel();
 		writer.outputLine("get {");
 		writer.incTabLevel();
@@ -128,12 +106,8 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 		writer.outputLine("}");
 		writer.newLine( 1 );
    		
-		
 		writer.outputLine("private static IntPtr objectClass = IntPtr.Zero;");
-//		if (isNotObjectClass)
-//			writer.outputLine("public static new IntPtr ObjectClass {");
-//		else
-			writer.outputLine("public static IntPtr ObjectClass {");
+		writer.outputLine("public static IntPtr ObjectClass {");
 		writer.incTabLevel();
 		writer.outputLine("get {");
 		writer.incTabLevel();
@@ -148,21 +122,17 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 		writer.outputLine("}");
 		writer.newLine( 1 );
 
-		// Only include these fields for 
-//		if ( /*!isNotObjectClass ||*/ 
-//				( root.isInterface() && root.getSuperClass() != null ) ) {
-			writer.outputLine("protected IntPtr peerObject = IntPtr.Zero;");
-			writer.outputLine("public IntPtr PeerObject {");
-			writer.incTabLevel();
-			writer.outputLine("get {");
-			writer.incTabLevel();
-			writer.outputLine("return peerObject;");
-			writer.decTabLevel();
-			writer.outputLine("}");
-			writer.decTabLevel();
-			writer.outputLine("}");
-			writer.newLine( 1 );
-//		}
+		writer.outputLine("protected IntPtr peerObject = IntPtr.Zero;");
+		writer.outputLine("public IntPtr PeerObject {");
+		writer.incTabLevel();
+		writer.outputLine("get {");
+		writer.incTabLevel();
+		writer.outputLine("return peerObject;");
+		writer.decTabLevel();
+		writer.outputLine("}");
+		writer.decTabLevel();
+		writer.outputLine("}");
+		writer.newLine( 1 );
 		
 		// Cast operator to IntPtr
 		writer.outputLine("public static explicit operator IntPtr(" + root.getFullyQualifiedClassName().replace('$', '_') + " obj) {");
@@ -171,17 +141,8 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 		writer.decTabLevel();
 		writer.outputLine("}");
 		writer.newLine( 1 );
-		
-		// Cast operator from IntPtr
-//		writer.outputLine("public static explicit operator " + root.getFullyQualifiedClassName().replace('$', '_') + "(IntPtr ptr) {");
-//		writer.incTabLevel();
-//		writer.outputLine("return new " + root.getFullyQualifiedClassName().replace('$', '_') + "(ptr);");
-//		writer.decTabLevel();
-//		writer.outputLine("}");
-//		writer.newLine( 1 );
 
-		// Generate constructors
-		//generateCtors( root, writer );
+		// Generate constructor
 		writer.outputLine( "// constructors" );
 		
 		writer.outputLine( "public " + getClassName(root) + "()" );
@@ -211,75 +172,8 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 		writer.outputLine("}");
 		writer.newLine( 1 );
 
-		// Generate methods
-		//generateMethods(root, writer);
-		writer.outputLine( "// methods" );
-		Iterator it = root.getMethods();
-		while ( it.hasNext() )
-		{
-			MethodNode node = (MethodNode) it.next();			
-			int currentIndex = 0;
-			
-			// First, generate abstract method that will be implemented
-			writer.output( "public abstract " + getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() ) + " " );
-			writer.output( getMethodName(node) + "(" );
-
-			Iterator params = node.getParameterList();
-			while ( params.hasNext() == true )
-			{
-				ClassNode currentParam = (ClassNode) params.next();
-				writer.output( getJNITypeName(currentParam, proxyGenSettings.getProject().getUsePartialSpec() ) + " p" + currentIndex++ );
-				
-				if ( params.hasNext() == true )
-					writer.output( ", " );
-			}
-			writer.outputLine( ");" );
-			writer.newLine(1);
-			
-			
-			currentIndex = 0;
-			
-			// Now, generate internal method that will be called from Unity internal
-			writer.output( getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() ) + 
-						   " " + getMethodName(node) + "(" );
-			params = node.getParameterList();
-			while ( params.hasNext() == true )
-			{
-				ClassNode currentParam = (ClassNode) params.next();
-				writer.output( getPlainJNITypeName(currentParam) + " p" + currentIndex++);
-				
-				if ( params.hasNext() == true )
-					writer.output( ", " );
-			}
-			writer.outputLine( ")" );
-			writer.outputLine("{");
-			writer.incTabLevel();
-			
-			// Call abstract method
-			String returnTypeName = getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() );
-			if ( returnTypeName.equals( "void" ) == false )
-				writer.output( "return " );
-				
-			writer.output( getMethodName(node) + "(" ); 
-			
-			params = node.getParameterList();
-			while ( params.hasNext() == true )
-			{
-				ClassNode currentParam = (ClassNode) params.next();
-				writer.output( "(" + getJNITypeName( currentParam, proxyGenSettings.getProject().getUsePartialSpec() ) + ")" + " p" + currentIndex++);
-				if (getPlainJNITypeName(currentParam).equals("AndroidJavaObject"))
-					writer.output(".getRawObject()");
-				
-				if ( params.hasNext() == true )
-					writer.output( ", " );
-			}
-			
-			writer.outputLine( ");" );
-			
-			writer.decTabLevel();
-			writer.outputLine("}");
-			writer.newLine(1);
-		}
+		// Generate abstract methods
+		generateMethods(root, writer);		
 
 		writer.decTabLevel();
 		writer.outputLine( "}" );
@@ -444,59 +338,6 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 				}
 			}
 		}
-
-		/*
-		if ( proxyGenSettings.getUseRichTypes() == true )
-		{
-			writer.newLine( 1 );
-			ArrayList arrayIncludes = new ArrayList();
-			ArrayList otherIncludes = new ArrayList();
-			ArrayList componentTypeIncludes = new ArrayList();
-			writer.outputLine( "// includes for parameter and return type proxy classes" );
-			Iterator it = root.getDependencies();
-			while ( it.hasNext() == true )
-			{
-				ClassNode cn = (ClassNode) it.next();
-				if ( alreadyGenerated.get( cn.getFullyQualifiedCPPClassName() ) == null )
-					if ( cn.isArray() == true )
-					{
-						if ( cn.getComponentType().needsProxy() == true )
-						{
-							String headerFile = cn.getComponentType().getPackageName().replace( '.', '_' );
-							if ( headerFile.equals( "" ) == false ) {
-								headerFile += '_';
-
-							}
-							headerFile += cn.getComponentType().getCPPClassName() + ".h";
-							componentTypeIncludes.add( headerFile );
-							alreadyGenerated.put( cn.getComponentType().getFullyQualifiedCPPClassName(), cn.getComponentType() );
-						}
-					}
-					else
-						if ( cn.needsProxy() == true )
-						{
-							String headerFile = cn.getPackageName().replace( '.', '_' );
-							if ( headerFile.equals( "" ) == false ) {
-								headerFile += '_';
-
-							}
-							headerFile += cn.getCPPClassName() + (cn.needsProxy() == true ? "Forward.h" : ".h");
-							otherIncludes.add( headerFile );
-							alreadyGenerated.put( cn.getFullyQualifiedCPPClassName(), cn );
-						}
-			}
-
-			it = arrayIncludes.iterator();
-			while ( it.hasNext() == true )
-				writer.outputLine( "#include \"" + (String) it.next() + "\"" );
-			it = otherIncludes.iterator();
-			while ( it.hasNext() == true )
-				writer.outputLine( "#include \"" + (String) it.next() + "\"" );
-			it = componentTypeIncludes.iterator();
-			while ( it.hasNext() == true )
-				writer.outputLine( "#include \"" + (String) it.next() + "\"" );
-		}
-		 */
 
 		Iterator<String> it = alreadyGenerated.iterator();
 		while(it.hasNext()) {
@@ -669,115 +510,186 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 			if (root.isImplemented(node))
 				continue;
 		
-			int currentIndex = 0;
-			String midName = node.getCSName() + String.valueOf(node.getJNISignature().hashCode()).replace('-', '_') + "_mid";
-			writer.outputLine("private static IntPtr " + midName + " = IntPtr.Zero;");
-			
-			if ( node.isStatic() == true )
-				writer.output( "public static " );
+			if (node.isAbstract()) 
+				generateAbstractMethod(node, writer);
 			else
-				writer.output( "public " );
-			
-			writer.output( getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() ) + " " );
-			writer.output( getMethodName(node) + "(" );
+				generateMethod(node, writer);
+						
+		}
 
-			Iterator params = node.getParameterList();
+	}
+	
+	public void generateMethod(MethodNode node, FormattedFileWriter writer) throws IOException {
+		int currentIndex = 0;
+		String midName = node.getCSName() + String.valueOf(node.getJNISignature().hashCode()).replace('-', '_') + "_mid";
+		writer.outputLine("private static IntPtr " + midName + " = IntPtr.Zero;");
+		
+		if ( node.isStatic() == true )
+			writer.output( "public static " );
+		else
+			writer.output( "public " );
+		
+		writer.output( getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() ) + " " );
+		writer.output( getMethodName(node, true) + "(" );
+
+		Iterator params = node.getParameterList();
+		while ( params.hasNext() == true )
+		{
+			ClassNode currentParam = (ClassNode) params.next();
+			writer.output( getJNITypeName(currentParam, proxyGenSettings.getProject().getUsePartialSpec() ) + " p" + currentIndex++ );
+			
+			if ( params.hasNext() == true )
+				writer.output( ", " );
+		}
+		writer.outputLine( ")" );
+
+		// Obtaining method id block
+		{
+			writer.outputLine( "{" );
+			writer.incTabLevel();
+			writer.outputLine( "if ( " + midName + " == IntPtr.Zero )" );
+			writer.incTabLevel();
+			writer.output( midName + " = AndroidJNI.Get" );
+			if ( node.isStatic() == true )
+				writer.output( "Static" );
+			writer.output( "MethodID( " + node.getParent().getFullyQualifiedClassName().replace('$', '_') + ".ObjectClass, " );
+			writer.outputLine( "\"" + node.getJNIName() + "\", \"" + node.getJNISignature() + "\" );");
+			writer.decTabLevel();
+		}
+
+		String returnTypeName = getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() );
+		if ( returnTypeName.equals( "void" ) == false )
+		{
+			writer.output( "return " );
+			if ( node.getReturnType().needsProxy() == true  ) 
+			{
+				writer.output( "new " + returnTypeName + "( " );
+				
+			}
+			else if ( node.getReturnType().isArray() ) 
+			{
+				writer.output( "new " + getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() ) + "( " );
+			}
+			else if ( node.getReturnType().isString() )
+				writer.output("");
+			else if ( node.getReturnType().isPrimitive() == false )
+				writer.output("(IntPtr)");
+		}
+
+		writer.output( getJNIMethodCall(node) );
+
+		if ( node.isStatic() == true )
+			writer.output( node.getParent().getFullyQualifiedClassName().replace('$', '_')  + ".ObjectClass, " );
+		else
+			writer.output( " this.PeerObject, " );
+		
+		writer.output( midName );
+		
+		if (node.getParameterCount() > 0) {
+			writer.output(", AndroidJNIHelper.CreateJNIArgArray( new object[] { ");
+			
+			currentIndex = 0;
+			params = node.getParameterList();
 			while ( params.hasNext() == true )
 			{
 				ClassNode currentParam = (ClassNode) params.next();
-				writer.output( getJNITypeName(currentParam, proxyGenSettings.getProject().getUsePartialSpec() ) + " p" + currentIndex++ );
-				
-				if ( params.hasNext() == true )
-					writer.output( ", " );
-			}
-			writer.outputLine( ")" );
-
-			// Obtaining method id block
-			{
-				writer.outputLine( "{" );
-				writer.incTabLevel();
-				writer.outputLine( "if ( " + midName + " == IntPtr.Zero )" );
-				writer.incTabLevel();
-				writer.output( midName + " = AndroidJNI.Get" );
-				if ( node.isStatic() == true )
-					writer.output( "Static" );
-				writer.output( "MethodID( " + root.getFullyQualifiedClassName().replace('$', '_') + ".ObjectClass, " );
-				writer.outputLine( "\"" + node.getJNIName() + "\", \"" + node.getJNISignature() + "\" );");
-				writer.decTabLevel();
-			}
-
-			String returnTypeName = getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() );
-			if ( returnTypeName.equals( "void" ) == false )
-			{
-				writer.output( "return " );
-				if ( node.getReturnType().needsProxy() == true  ) 
-				{
-					writer.output( "new " + returnTypeName + "( " );
+				if (currentParam.getFullyQualifiedClassName().equals( "java.lang.String" )) {
+					writer.output(" p" + currentIndex++ );
+					
+				} else if ( currentParam.isPrimitive() == false ) {
+					writer.output( "(IntPtr) p" + currentIndex++ );
+					
+				} else {
+					writer.output( "p" + currentIndex++ );
 					
 				}
-				else if ( node.getReturnType().isArray() ) 
-				{
-					writer.output( "new " + getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() ) + "( " );
-				}
-				else if ( node.getReturnType().isString() )
-					writer.output("");
-				else if ( node.getReturnType().isPrimitive() == false )
-					writer.output("(IntPtr)");
-			}
-
-			writer.output( getJNIMethodCall(node) );
-
-			if ( node.isStatic() == true )
-				writer.output( root.getFullyQualifiedClassName().replace('$', '_')  + ".ObjectClass, " );
-			else
-				writer.output( " this.PeerObject, " );
-			
-			writer.output( midName );
-			
-			if (node.getParameterCount() > 0) {
-				writer.output(", AndroidJNIHelper.CreateJNIArgArray( new object[] { ");
 				
-				currentIndex = 0;
-				params = node.getParameterList();
-				while ( params.hasNext() == true )
-				{
-					ClassNode currentParam = (ClassNode) params.next();
-					if (currentParam.getFullyQualifiedClassName().equals( "java.lang.String" )) {
-						writer.output(" p" + currentIndex++ );
-						
-					} else if ( currentParam.isPrimitive() == false ) {
-						writer.output( "(IntPtr) p" + currentIndex++ );
-						
-					} else {
-						writer.output( "p" + currentIndex++ );
-						
-					}
-					
-					if (params.hasNext())
-						writer.output(", ");
-				}
-				
-				writer.output(" } )");
-			}
-			else
-			{
-				writer.output(", new jvalue[]{} ");
+				if (params.hasNext())
+					writer.output(", ");
 			}
 			
-			
-			if ( returnTypeName.equals( "void" ) == false && 
-				 node.getReturnType().isPrimitive() == false &&
-				 node.getReturnType().isString() == false )
-				writer.output( " ) " );
-
-			writer.outputLine( " );" );
-			
-			writer.decTabLevel();
-			writer.outputLine( "}" );
-			writer.newLine( 1 );
-			
+			writer.output(" } )");
 		}
+		else
+		{
+			writer.output(", new jvalue[]{} ");
+		}
+		
+		
+		if ( returnTypeName.equals( "void" ) == false && 
+			 node.getReturnType().isPrimitive() == false &&
+			 node.getReturnType().isString() == false )
+			writer.output( " ) " );
 
+		writer.outputLine( " );" );
+		
+		writer.decTabLevel();
+		writer.outputLine( "}" );
+		writer.newLine( 1 );
+	}
+	
+	public void generateAbstractMethod(MethodNode node, FormattedFileWriter writer) throws IOException {			
+		int currentIndex = 0;
+		
+		// First, generate abstract method that will be implemented
+		writer.output( "public abstract " + getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() ) + " " );
+		writer.output( getMethodName(node, true) + "(" );
+
+		Iterator params = node.getParameterList();
+		while ( params.hasNext() == true )
+		{
+			ClassNode currentParam = (ClassNode) params.next();
+			writer.output( getJNITypeName(currentParam, proxyGenSettings.getProject().getUsePartialSpec() ) + " p" + currentIndex++ );
+			
+			if ( params.hasNext() == true )
+				writer.output( ", " );
+		}
+		writer.outputLine( ");" );
+		writer.newLine(1);
+		
+		
+		currentIndex = 0;
+		
+		// Now, generate internal method that will be called from Unity internal
+		writer.output( getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() ) + 
+					   " " + getMethodName(node) + "(" );
+		params = node.getParameterList();
+		while ( params.hasNext() == true )
+		{
+			ClassNode currentParam = (ClassNode) params.next();
+			writer.output( getPlainJNITypeName(currentParam) + " p" + currentIndex++);
+			
+			if ( params.hasNext() == true )
+				writer.output( ", " );
+		}
+		writer.outputLine( ")" );
+		writer.outputLine("{");
+		writer.incTabLevel();
+		
+		// Call abstract method
+		String returnTypeName = getJNITypeName(node.getReturnType(), proxyGenSettings.getProject().getUsePartialSpec() );
+		if ( returnTypeName.equals( "void" ) == false )
+			writer.output( "return " );
+			
+		writer.output( getMethodName(node, true) + "(" ); 
+		
+		params = node.getParameterList();
+		while ( params.hasNext() == true )
+		{
+			ClassNode currentParam = (ClassNode) params.next();
+			writer.output( "(" + getJNITypeName( currentParam, proxyGenSettings.getProject().getUsePartialSpec() ) + ")" + " p" + currentIndex++);
+			if (getPlainJNITypeName(currentParam).equals("AndroidJavaObject"))
+				writer.output(".getRawObject()");
+			
+			if ( params.hasNext() == true )
+				writer.output( ", " );
+		}
+		
+		writer.outputLine( ");" );
+		
+		writer.decTabLevel();
+		writer.outputLine("}");
+		writer.newLine(1);
 	}
 
 	public String getClassName(ClassNode root) {
@@ -882,7 +794,17 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 	}
 
 	public String getMethodName(MethodNode node) {
-		return Util.getCSIdentifier( node.getName() );
+		return getMethodName(node, false);
+	}
+	
+	public String getMethodName(MethodNode node, boolean firstLetterUpper) {
+		String name = Util.getCSIdentifier( node.getName() );
+		
+		if (firstLetterUpper) {
+			name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
+		}
+		
+		return name;
 	}
 
 }
