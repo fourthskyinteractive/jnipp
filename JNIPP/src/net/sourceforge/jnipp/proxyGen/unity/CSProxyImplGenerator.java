@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.sourceforge.jnipp.common.ClassNode;
+import net.sourceforge.jnipp.common.FieldNode;
 import net.sourceforge.jnipp.common.FormattedFileWriter;
 import net.sourceforge.jnipp.common.MethodNode;
 import net.sourceforge.jnipp.common.Util;
@@ -208,6 +209,9 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 		writer.outputLine( "" );
 		writer.outputLine( "{" );
 		writer.incTabLevel();
+		
+		// Generate constants
+		generateConstants(root, writer);
 
 		// Generate private fields
 		writer.outputLine("private static readonly string className = \"" +
@@ -344,6 +348,20 @@ public class CSProxyImplGenerator implements ProxyImplGenerator {
 			writer.outputLine("using " + it.next() + ";");
 		}
 		writer.newLine( 1 );
+	}
+	
+	public void generateConstants(ClassNode root, FormattedFileWriter writer) throws IOException {
+		
+		Iterator it = root.getFields();
+		while(it.hasNext()) {
+			FieldNode node = (FieldNode) it.next();
+			System.out.println("Found const " + node.getName() + " with value " + node.getValue());
+			if (node.isConstant()) {
+				writer.outputLine("public static readonly " + getJNITypeName(node.getType(), false) + " " + node.getName() + " = " + node.getValue());
+			}
+		}		
+		
+		writer.newLine(1);
 	}
 
 	public void generateUsing(ClassNode root, FormattedFileWriter writer) throws IOException {

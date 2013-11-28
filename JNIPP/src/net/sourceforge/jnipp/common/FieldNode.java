@@ -15,6 +15,8 @@ public class FieldNode
 	private String jniSetFieldCall = null;
 	private ClassNode type = null;
 	private boolean staticField = false;
+	private String value = null;
+	
 
 	public FieldNode(Field field)
 		throws ClassNotFoundException
@@ -22,6 +24,47 @@ public class FieldNode
 		name = field.getName();
 		type = ClassNode.getClassNode( field.getType().getName() );
 		staticField = Modifier.isStatic( field.getModifiers() );
+		
+		// If field is static and final, store value
+		try {
+			if ( staticField && Modifier.isFinal( field.getModifiers()) ) {				
+				if ( field.getType() == int.class ) {
+					value = String.valueOf(field.getInt(null));				
+							
+				} else if ( field.getType() == String.class ) {
+					value = field.get(null).toString();
+					
+				} else if ( field.getType() == long.class ) {
+					value = String.valueOf(field.getLong(null));
+					
+				} else if ( field.getType() == short.class ) {
+					value = String.valueOf(field.getShort(null));
+					
+				} else if ( field.getType() == byte.class ) {
+					value = String.valueOf(field.getByte(null));
+					
+				} else if ( field.getType() == float.class ) {
+					value = String.valueOf(field.getFloat(null));
+					
+				} else if ( field.getType() == double.class ) {
+					value = String.valueOf(field.getDouble(null));
+					
+				} else if ( field.getType() == boolean.class ) {
+					value = String.valueOf(field.getBoolean(null));
+					
+				} else if ( field.getType() == char.class ) {
+					value = String.valueOf(field.getChar(null));
+					
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		buildJNIGetFieldCall();
 		buildJNISetFieldCall();
 	}
@@ -88,5 +131,13 @@ public class FieldNode
 	public boolean isStatic()
 	{
 		return staticField;
+	}
+
+	public boolean isConstant() {
+		return isStatic() && value != null;
+	}
+
+	public String getValue() {
+		return value;
 	}
 }

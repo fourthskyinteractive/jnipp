@@ -12,6 +12,8 @@
 			<input-class name="java.net.DatagramSocket"/>
 			<input-class name="java.net.MulticastSocket"/>
 			
+			<input-class name="java.nio.channels.FileChannel"/>
+			
 			<input-class name="android.app.Activity"/>
 			<input-class name="android.app.NotificationManager"/>
 			<input-class name="android.app.Notification$Builder"/>

@@ -8,6 +8,7 @@ import net.sourceforge.jnipp.project.ProxyGenSettings;
 import net.sourceforge.jnipp.proxyGen.ProxyImplGenerator;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * C++ proxy class implementation file generator.
@@ -753,5 +754,11 @@ public class CPPProxyImplGenerator implements ProxyImplGenerator
 
 	public String getMethodName(MethodNode node) {
 		return Util.getCPPIdentifier( node.getName() );
+	}
+
+	public void generateConstants(ClassNode root, FormattedFileWriter writer)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 }

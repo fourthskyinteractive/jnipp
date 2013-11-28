@@ -7,9 +7,11 @@ import net.sourceforge.jnipp.project.ProxyGenSettings;
 
 public interface ProxyImplGenerator {
 
-void generate(ClassNode root, ProxyGenSettings proxyGenSettings) throws java.io.IOException;
+	void generate(ClassNode root, ProxyGenSettings proxyGenSettings) throws java.io.IOException;
 	
 	void generateIncludes(ClassNode root, FormattedFileWriter writer) throws java.io.IOException;
+
+	void generateConstants(ClassNode root, FormattedFileWriter writer) throws java.io.IOException;
 	
 	void generateUsing(ClassNode root, FormattedFileWriter writer) throws java.io.IOException;
 	
